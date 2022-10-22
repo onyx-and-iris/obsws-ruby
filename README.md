@@ -17,7 +17,7 @@
 pass `host`, `port` and `password` as keyword arguments.
 
 ```ruby
-require_relative "lib/obsws"
+require "obsws"
 
 def main
   r_client =
