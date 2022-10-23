@@ -51,6 +51,10 @@ module OBSWS
           raise OBSWSError.new(error.join("\n"))
         end
         @response[:responseData]
+      rescue WaitUtil::TimeoutError
+        msg = "no response with matching id received"
+        LOGGER.error(msg)
+        raise OBSWSError.new(msg)
       end
 
       def get_version

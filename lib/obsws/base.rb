@@ -37,11 +37,8 @@ module OBSWS
       @socket = TCPSocket.new(host, port)
       @driver =
         WebSocket::Driver.client(Socket.new("ws://#{host}:#{port}", @socket))
-      @ready = false
-      @closed = false
       @driver.on :open do |msg|
         LOGGER.debug("driver socket open")
-        @ready = true
       end
       @driver.on :close do |msg|
         LOGGER.debug("driver socket closed")
@@ -51,21 +48,23 @@ module OBSWS
         LOGGER.debug("received [#{msg}] passing to handler")
         msg_handler(JSON.parse(msg.data, symbolize_names: true))
       end
-      Thread.new { start_driver }
+      start_driver
       WaitUtil.wait_for_condition(
-        "driver socket ready",
+        "waiting authentication successful",
         delay_sec: 0.01,
-        timeout_sec: 0.5
-      ) { @ready }
+        timeout_sec: 3
+      ) { @authenticated }
     end
 
     def start_driver
-      @driver.start
+      Thread.new do
+        @driver.start
 
-      loop do
-        @driver.parse(@socket.readpartial(4096))
-      rescue EOFError
-        break
+        loop do
+          @driver.parse(@socket.readpartial(4096))
+        rescue EOFError
+          break
+        end
       end
     end
 
@@ -85,6 +84,7 @@ module OBSWS
           eventSubscriptions: @subs
         }
       }
+      LOGGER.debug("initiating authentication")
       @driver.text(JSON.generate(payload))
     end
 
@@ -92,9 +92,11 @@ module OBSWS
       op_code = data[:op]
       case op_code
       when Mixin::OPCodes::HELLO
+        LOGGER.debug("hello received, passing to auth")
         authenticate(data[:d][:authentication])
       when Mixin::OPCodes::IDENTIFIED
-        LOGGER.debug("Authentication successful")
+        LOGGER.debug("authentication successful")
+        @authenticated = true
       when Mixin::OPCodes::EVENT, Mixin::OPCodes::REQUESTRESPONSE
         changed
         notify_observers(op_code, data[:d])
