@@ -1,3 +1,4 @@
+[![Gem Version](https://badge.fury.io/rb/obsws.svg)](https://badge.fury.io/rb/obsws)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://github.com/onyx-and-iris/voicemeeter-api-ruby/blob/dev/LICENSE)
 [![code style: prettier](https://img.shields.io/badge/code_style-prettier-ff69b4.svg?style=flat-square)](https://github.com/prettier/plugin-ruby)
 
