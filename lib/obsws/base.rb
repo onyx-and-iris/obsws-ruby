@@ -50,10 +50,10 @@ module OBSWS
       end
       start_driver
       WaitUtil.wait_for_condition(
-        "waiting authentication successful",
+        "waiting successful identification",
         delay_sec: 0.01,
         timeout_sec: 3
-      ) { @authenticated }
+      ) { @identified }
     end
 
     def start_driver
@@ -74,32 +74,33 @@ module OBSWS
       )
     end
 
-    def authenticate(auth)
-      token = auth_token(**auth)
+    def authenticate(auth = nil)
       payload = {
         op: Mixin::OPCodes::IDENTIFY,
         d: {
           rpcVersion: 1,
-          authentication: token,
           eventSubscriptions: @subs
         }
       }
-      LOGGER.debug("initiating authentication")
+      payload[:d][:authentication] = auth_token(**auth) if auth
       @driver.text(JSON.generate(payload))
     end
 
     def msg_handler(data)
-      op_code = data[:op]
-      case op_code
+      case data[:op]
       when Mixin::OPCodes::HELLO
-        LOGGER.debug("hello received, passing to auth")
+        if data[:d].key? :authentication
+          LOGGER.debug("initiating authentication")
+        else
+          LOGGER.debug("authentication disabled... skipping.")
+        end
         authenticate(data[:d][:authentication])
       when Mixin::OPCodes::IDENTIFIED
-        LOGGER.debug("authentication successful")
-        @authenticated = true
+        LOGGER.debug("client succesfully identified with server")
+        @identified = true
       when Mixin::OPCodes::EVENT, Mixin::OPCodes::REQUESTRESPONSE
         changed
-        notify_observers(op_code, data[:d])
+        notify_observers(data[:op], data[:d])
       end
     end
 
