@@ -1,6 +1,5 @@
+require "obsws"
 require "perfect_toml"
-
-require_relative "../../lib/obsws"
 
 OBSWS::LOGGER.debug!
 
