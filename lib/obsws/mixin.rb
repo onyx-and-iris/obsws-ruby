@@ -5,7 +5,7 @@ module OBSWS
     module Meta
       include Util
 
-      def make_response_methods(*params)
+      def make_field_methods(*params)
         params.each do |param|
           define_singleton_method(param.to_s.to_snake) { @resp[param] }
         end
@@ -18,7 +18,7 @@ module OBSWS
       def initialize(resp, fields)
         @resp = resp
         @fields = fields
-        self.make_response_methods *fields
+        self.make_field_methods *fields
       end
 
       def empty? = @fields.empty?
