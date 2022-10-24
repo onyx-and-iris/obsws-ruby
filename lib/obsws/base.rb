@@ -74,7 +74,8 @@ module OBSWS
       )
     end
 
-    def authenticate(auth = nil)
+    def identify(auth)
+      LOGGER.info("initiating authentication") if auth
       payload = {
         op: Mixin::OPCodes::IDENTIFY,
         d: {
@@ -89,14 +90,8 @@ module OBSWS
     def msg_handler(data)
       case data[:op]
       when Mixin::OPCodes::HELLO
-        if data[:d].key? :authentication
-          LOGGER.debug("initiating authentication")
-        else
-          LOGGER.debug("authentication disabled... skipping.")
-        end
-        authenticate(data[:d][:authentication])
+        identify(data[:d][:authentication])
       when Mixin::OPCodes::IDENTIFIED
-        LOGGER.debug("client succesfully identified with server")
         @identified = true
       when Mixin::OPCodes::EVENT, Mixin::OPCodes::REQUESTRESPONSE
         changed

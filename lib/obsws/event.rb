@@ -77,7 +77,12 @@ module OBSWS
       def initialize(**kwargs)
         kwargs[:subs] = SUBS.low_volume
         @base_client = Base.new(**kwargs)
+        LOGGER.info("#{self} succesfully identified with server")
         @base_client.add_observer(self)
+      end
+
+      def to_s
+        "#{self.class.name.split("::").last(2).join("::")}"
       end
 
       def update(op_code, data)

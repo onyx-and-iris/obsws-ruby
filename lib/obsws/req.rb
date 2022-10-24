@@ -14,8 +14,13 @@ module OBSWS
 
       def initialize(**kwargs)
         @base_client = Base.new(**kwargs)
+        LOGGER.info("#{self} succesfully identified with server")
         @base_client.add_observer(self)
         @response = { requestId: 0 }
+      end
+
+      def to_s
+        "#{self.class.name.split("::").last(2).join("::")}"
       end
 
       def run
