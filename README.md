@@ -11,6 +11,19 @@
     -   With the release of OBS Studio version 28, Websocket plugin is included by default. But it should be manually installed for earlier versions of OBS.
 -   Ruby 3.0 or greater
 
+## Installation
+
+### Bundler
+
+```
+bundle add 'obsws'
+bundle install
+```
+
+### Gem
+
+`gem install 'obsws'`
+
 ## `Use`
 
 #### Example `main.rb`
