@@ -1,7 +1,7 @@
 require "obsws"
 require "perfect_toml"
 
-OBSWS::LOGGER.debug!
+OBSWS::LOGGER.info!
 
 class Observer
   attr_reader :running
