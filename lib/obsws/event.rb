@@ -7,38 +7,30 @@ module OBSWS
   module Events
     module SUBS
       NONE = 0
-      GENERAL = (1 << 0)
-      CONFIG = (1 << 1)
-      SCENES = (1 << 2)
-      INPUTS = (1 << 3)
-      TRANSITIONS = (1 << 4)
-      FILTERS = (1 << 5)
-      OUTPUTS = (1 << 6)
-      SCENEITEMS = (1 << 7)
-      MEDIAINPUTS = (1 << 8)
-      VENDORS = (1 << 9)
-      UI = (1 << 10)
+      GENERAL = 1 << 0
+      CONFIG = 1 << 1
+      SCENES = 1 << 2
+      INPUTS = 1 << 3
+      TRANSITIONS = 1 << 4
+      FILTERS = 1 << 5
+      OUTPUTS = 1 << 6
+      SCENEITEMS = 1 << 7
+      MEDIAINPUTS = 1 << 8
+      VENDORS = 1 << 9
+      UI = 1 << 10
 
-      def low_volume
-        GENERAL | CONFIG | SCENES | INPUTS | TRANSITIONS | FILTERS | OUTPUTS |
+      LOW_VOLUME = GENERAL | CONFIG | SCENES | INPUTS | TRANSITIONS | FILTERS | OUTPUTS |
           SCENEITEMS | MEDIAINPUTS | VENDORS | UI
-      end
 
-      INPUTVOLUMEMETERS = (1 << 16)
-      INPUTACTIVESTATECHANGED = (1 << 17)
-      INPUTSHOWSTATECHANGED = (1 << 18)
-      SCENEITEMTRANSFORMCHANGED = (1 << 19)
+      INPUTVOLUMEMETERS = 1 << 16
+      INPUTACTIVESTATECHANGED = 1 << 17
+      INPUTSHOWSTATECHANGED = 1 << 18
+      SCENEITEMTRANSFORMCHANGED = 1 << 19
 
-      def high_volume
-        INPUTVOLUMEMETERS | INPUTACTIVESTATECHANGED | INPUTSHOWSTATECHANGED |
+      HIGH_VOLUME = INPUTVOLUMEMETERS | INPUTACTIVESTATECHANGED | INPUTSHOWSTATECHANGED |
           SCENEITEMTRANSFORMCHANGED
-      end
 
-      def all
-        low_volume | high_volume
-      end
-
-      module_function :low_volume, :high_volume, :all
+      ALL = LOW_VOLUME | HIGH_VOLUME
     end
 
     module Callbacks
@@ -75,7 +67,7 @@ module OBSWS
       include Mixin::OPCodes
 
       def initialize(**kwargs)
-        kwargs[:subs] = SUBS.low_volume
+        kwargs[:subs] ||= SUBS::LOW_VOLUME
         @base_client = Base.new(**kwargs)
         LOGGER.info("#{self} succesfully identified with server")
         @base_client.add_observer(self)
