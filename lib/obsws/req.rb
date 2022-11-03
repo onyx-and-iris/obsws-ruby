@@ -329,6 +329,7 @@ module OBSWS
 
       def get_special_inputs
         resp = call("GetSpecialInputs")
+        Mixin::Response.new(resp, resp.keys)
       end
 
       def create_input(
@@ -346,6 +347,7 @@ module OBSWS
           sceneItemEnabled: scene_item_enabled
         }
         resp = call("CreateInput", payload)
+        Mixin::Response.new(resp, resp.keys)
       end
 
       def remove_input(name)
@@ -828,6 +830,7 @@ module OBSWS
 
       def stop_record
         resp = call("StopRecord")
+        Mixin::Response.new(resp, resp.keys)
       end
 
       def toggle_record_pause
