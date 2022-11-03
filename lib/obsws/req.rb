@@ -261,7 +261,7 @@ module OBSWS
       end
 
       def get_group_list
-        resp = call("GetSceneList")
+        resp = call("GetGroupList")
         Mixin::Response.new(resp, resp.keys)
       end
 
