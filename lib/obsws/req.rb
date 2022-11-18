@@ -77,7 +77,10 @@ module OBSWS
       end
 
       def call_vendor_request(name, type_, data = nil)
-        call(requestType, requestData)
+        payload = { vendorName: name, requestType: type_ }
+        payload[:requestData] = data if data
+        resp = call("CallVendorRequest", payload)
+        Mixin::Response.new(resp, resp.keys)
       end
 
       def get_hotkey_list
