@@ -115,6 +115,19 @@ If a request fails an `OBSWSError` will be raised with a status code.
 
 For a full list of status codes refer to [Codes](https://github.com/obsproject/obs-websocket/blob/master/docs/generated/protocol.md#requeststatus)
 
+### Logging
+
+To see the raw messages set log level to debug
+
+example:
+
+```ruby
+require "obsws"
+
+OBSWS::LOGGER.debug!
+...
+```
+
 ### Tests
 
 To run all tests:

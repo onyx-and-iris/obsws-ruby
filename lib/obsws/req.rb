@@ -28,7 +28,7 @@ module OBSWS
       ensure
         close
         WaitUtil.wait_for_condition(
-          "driver has closed",
+          "driver to close",
           delay_sec: 0.01,
           timeout_sec: 1
         ) { @base_client.closed }
@@ -42,7 +42,7 @@ module OBSWS
         id = rand(1..1000)
         @base_client.req(id, req, data)
         WaitUtil.wait_for_condition(
-          "reponse id matches request id",
+          "reponse id to match request id",
           delay_sec: 0.001,
           timeout_sec: 3
         ) { @response[:requestId] == id }

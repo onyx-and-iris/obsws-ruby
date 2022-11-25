@@ -45,12 +45,12 @@ module OBSWS
         @closed = true
       end
       @driver.on :message do |msg|
-        LOGGER.debug("received [#{msg}] passing to handler")
+        LOGGER.debug("received: #{msg.data}")
         msg_handler(JSON.parse(msg.data, symbolize_names: true))
       end
       start_driver
       WaitUtil.wait_for_condition(
-        "waiting successful identification",
+        "successful identification",
         delay_sec: 0.01,
         timeout_sec: 3
       ) { @identified }
@@ -75,15 +75,20 @@ module OBSWS
     end
 
     def identify(auth)
-      LOGGER.info("initiating authentication") if auth
-      payload = {
-        op: Mixin::OPCodes::IDENTIFY,
-        d: {
-          rpcVersion: 1,
-          eventSubscriptions: @subs
+      if auth
+        if @password.empty?
+          raise OBSWSError("auth enabled but no password provided")
+        end
+        LOGGER.info("initiating authentication")
+        payload = {
+          op: Mixin::OPCodes::IDENTIFY,
+          d: {
+            rpcVersion: 1,
+            eventSubscriptions: @subs
+          }
         }
-      }
-      payload[:d][:authentication] = auth_token(**auth) if auth
+        payload[:d][:authentication] = auth_token(**auth)
+      end
       @driver.text(JSON.generate(payload))
     end
 
@@ -108,8 +113,8 @@ module OBSWS
         }
       }
       payload[:d][:requestData] = data if data
+      LOGGER.debug("sending request: #{payload}")
       queued = @driver.text(JSON.generate(payload))
-      LOGGER.debug("request with id #{id} queued? #{queued}")
     end
   end
 end
