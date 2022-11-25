@@ -75,18 +75,18 @@ module OBSWS
     end
 
     def identify(auth)
+      payload = {
+        op: Mixin::OPCodes::IDENTIFY,
+        d: {
+          rpcVersion: 1,
+          eventSubscriptions: @subs
+        }
+      }
       if auth
         if @password.empty?
           raise OBSWSError("auth enabled but no password provided")
         end
         LOGGER.info("initiating authentication")
-        payload = {
-          op: Mixin::OPCodes::IDENTIFY,
-          d: {
-            rpcVersion: 1,
-            eventSubscriptions: @subs
-          }
-        }
         payload[:d][:authentication] = auth_token(**auth)
       end
       @driver.text(JSON.generate(payload))
