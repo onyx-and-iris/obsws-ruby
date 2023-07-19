@@ -1,12 +1,12 @@
 require "minitest"
 require "minitest/autorun"
-require "perfect_toml"
+require "yaml"
 
 require_relative "../lib/obsws"
 
 class OBSWSTest < Minitest::Test
   def self.before_run
-    conn = PerfectTOML.load_file("obs.toml", symbolize_names: true)[:connection]
+    conn = YAML.load_file("obs.yml", symbolize_names: true)[:connection]
     @@r_client = OBSWS::Requests::Client.new(**conn)
 
     @@r_client.create_scene("START_TEST")

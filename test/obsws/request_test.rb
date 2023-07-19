@@ -30,9 +30,9 @@ class RequestTest < OBSWSTest
     resp = @@r_client.get_stream_service_settings
     assert resp.stream_service_type == "rtmp_common"
     assert resp.stream_service_settings ==
-             {
-               server: "rtmp://addressofrtmpserver",
-               key: "live_myvery_secretkey"
-             }
+      {
+        server: "rtmp://addressofrtmpserver",
+        key: "live_myvery_secretkey"
+      }
   end
 end
