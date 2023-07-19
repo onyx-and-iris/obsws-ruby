@@ -20,7 +20,7 @@ module OBSWS
       UI = 1 << 10
 
       LOW_VOLUME = GENERAL | CONFIG | SCENES | INPUTS | TRANSITIONS | FILTERS | OUTPUTS |
-          SCENEITEMS | MEDIAINPUTS | VENDORS | UI
+        SCENEITEMS | MEDIAINPUTS | VENDORS | UI
 
       INPUTVOLUMEMETERS = 1 << 16
       INPUTACTIVESTATECHANGED = 1 << 17
@@ -28,7 +28,7 @@ module OBSWS
       SCENEITEMTRANSFORMCHANGED = 1 << 19
 
       HIGH_VOLUME = INPUTVOLUMEMETERS | INPUTACTIVESTATECHANGED | INPUTSHOWSTATECHANGED |
-          SCENEITEMTRANSFORMCHANGED
+        SCENEITEMTRANSFORMCHANGED
 
       ALL = LOW_VOLUME | HIGH_VOLUME
     end
@@ -74,7 +74,7 @@ module OBSWS
       end
 
       def to_s
-        "#{self.class.name.split("::").last(2).join("::")}"
+        self.class.name.split("::").last(2).join("::")
       end
 
       def update(op_code, data)
