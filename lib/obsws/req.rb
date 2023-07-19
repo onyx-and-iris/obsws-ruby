@@ -16,15 +16,15 @@ module OBSWS
         @base_client = Base.new(**kwargs)
         LOGGER.info("#{self} succesfully identified with server")
         @base_client.add_observer(self)
-        @response = { requestId: 0 }
+        @response = {requestId: 0}
       end
 
       def to_s
-        "#{self.class.name.split("::").last(2).join("::")}"
+        self.class.name.split("::").last(2).join("::")
       end
 
       def run
-        yield
+        yield(self)
       ensure
         close
         WaitUtil.wait_for_condition(
@@ -63,34 +63,34 @@ module OBSWS
       end
 
       def get_version
-        resp = call("GetVersion")
+        resp = call(:GetVersion)
         Mixin::Response.new(resp, resp.keys)
       end
 
       def get_stats
-        resp = call("GetStats")
+        resp = call(:GetStats)
         Mixin::Response.new(resp, resp.keys)
       end
 
       def broadcast_custom_event(data)
-        call("BroadcastCustomEvent", data)
+        call(:BroadcastCustomEvent, data)
       end
 
-      def call_vendor_request(name, type_, data = nil)
-        payload = { vendorName: name, requestType: type_ }
+      def call_vendor_request(vendor_name, request_type, data = nil)
+        payload = {vendorName: vendor_name, requestType: request_type}
         payload[:requestData] = data if data
-        resp = call("CallVendorRequest", payload)
+        resp = call(:CallVendorRequest, payload)
         Mixin::Response.new(resp, resp.keys)
       end
 
       def get_hotkey_list
-        resp = call("GetHotkeyList")
+        resp = call(:GetHotkeyList)
         Mixin::Response.new(resp, resp.keys)
       end
 
       def trigger_hotkey_by_name(name)
-        payload = { hotkeyName: name }
-        call("TriggerHotkeyByName", payload)
+        payload = {hotkeyName: name}
+        call(:TriggerHotkeyByName, payload)
       end
 
       def trigger_hotkey_by_key_sequence(
@@ -109,63 +109,63 @@ module OBSWS
             cmd: press_cmd
           }
         }
-        call("TriggerHotkeyByKeySequence", payload)
+        call(:TriggerHotkeyByKeySequence, payload)
       end
 
       def sleep(sleep_millis = nil, sleep_frames = nil)
-        payload = { sleepMillis: sleep_millis, sleepFrames: sleep_frames }
-        call("Sleep", payload)
+        payload = {sleepMillis: sleep_millis, sleepFrames: sleep_frames}
+        call(:Sleep, payload)
       end
 
       def get_persistent_data(realm, slot_name)
-        payload = { realm: realm, slotName: slot_name }
-        resp = call("GetPersistentData", payload)
+        payload = {realm: realm, slotName: slot_name}
+        resp = call(:GetPersistentData, payload)
         Mixin::Response.new(resp, resp.keys)
       end
 
       def set_persistent_data(realm, slot_name, slot_value)
-        payload = { realm: realm, slotName: slot_name, slotValue: slot_value }
-        call("SetPersistentData", payload)
+        payload = {realm: realm, slotName: slot_name, slotValue: slot_value}
+        call(:SetPersistentData, payload)
       end
 
       def get_scene_collection_list
-        resp = call("GetSceneCollectionList")
+        resp = call(:GetSceneCollectionList)
         Mixin::Response.new(resp, resp.keys)
       end
 
       def set_current_scene_collection(name)
-        payload = { sceneCollectionName: name }
-        call("SetCurrentSceneCollection", payload)
+        payload = {sceneCollectionName: name}
+        call(:SetCurrentSceneCollection, payload)
       end
 
       def create_scene_collection(name)
-        payload = { sceneCollectionName: name }
-        call("CreateSceneCollection", payload)
+        payload = {sceneCollectionName: name}
+        call(:CreateSceneCollection, payload)
       end
 
       def get_profile_list
-        resp = call("GetProfileList")
+        resp = call(:GetProfileList)
         Mixin::Response.new(resp, resp.keys)
       end
 
       def set_current_profile(name)
-        payload = { profileName: name }
-        call("SetCurrentProfile", payload)
+        payload = {profileName: name}
+        call(:SetCurrentProfile, payload)
       end
 
       def create_profile(name)
-        payload = { profileName: name }
-        call("CreateProfile", payload)
+        payload = {profileName: name}
+        call(:CreateProfile, payload)
       end
 
       def remove_profile(name)
-        payload = { profileName: name }
-        call("RemoveProfile", payload)
+        payload = {profileName: name}
+        call(:RemoveProfile, payload)
       end
 
       def get_profile_parameter(category, name)
-        payload = { parameterCategory: category, parameterName: name }
-        resp = call("GetProfileParameter", payload)
+        payload = {parameterCategory: category, parameterName: name}
+        resp = call(:GetProfileParameter, payload)
         Mixin::Response.new(resp, resp.keys)
       end
 
@@ -175,11 +175,11 @@ module OBSWS
           parameterName: name,
           parameterValue: value
         }
-        call("SetProfileParameter", payload)
+        call(:SetProfileParameter, payload)
       end
 
       def get_video_settings
-        resp = call("GetVideoSettings")
+        resp = call(:GetVideoSettings)
         Mixin::Response.new(resp, resp.keys)
       end
 
@@ -199,11 +199,11 @@ module OBSWS
           outputWidth: out_width,
           outputHeight: out_height
         }
-        call("SetVideoSettings", payload)
+        call(:SetVideoSettings, payload)
       end
 
       def get_stream_service_settings
-        resp = call("GetStreamServiceSettings")
+        resp = call(:GetStreamServiceSettings)
         Mixin::Response.new(resp, resp.keys)
       end
 
@@ -212,17 +212,17 @@ module OBSWS
           streamServiceType: ss_type,
           streamServiceSettings: ss_settings
         }
-        call("SetStreamServiceSettings", payload)
+        call(:SetStreamServiceSettings, payload)
       end
 
       def get_record_directory
-        resp = call("GetRecordDirectory")
+        resp = call(:GetRecordDirectory)
         Mixin::Response.new(resp, resp.keys)
       end
 
       def get_source_active(name)
-        payload = { sourceName: name }
-        resp = call("GetSourceActive", payload)
+        payload = {sourceName: name}
+        resp = call(:GetSourceActive, payload)
         Mixin::Response.new(resp, resp.keys)
       end
 
@@ -234,7 +234,7 @@ module OBSWS
           imageHeight: height,
           imageCompressionQuality: quality
         }
-        resp = call("GetSourceScreenshot", payload)
+        resp = call(:GetSourceScreenshot, payload)
         Mixin::Response.new(resp, resp.keys)
       end
 
@@ -254,58 +254,58 @@ module OBSWS
           imageHeight: height,
           imageCompressionQuality: quality
         }
-        resp = call("SaveSourceScreenshot", payload)
+        resp = call(:SaveSourceScreenshot, payload)
         Mixin::Response.new(resp, resp.keys)
       end
 
       def get_scene_list
-        resp = call("GetSceneList")
+        resp = call(:GetSceneList)
         Mixin::Response.new(resp, resp.keys)
       end
 
       def get_group_list
-        resp = call("GetGroupList")
+        resp = call(:GetGroupList)
         Mixin::Response.new(resp, resp.keys)
       end
 
       def get_current_program_scene
-        resp = call("GetCurrentProgramScene")
+        resp = call(:GetCurrentProgramScene)
         Mixin::Response.new(resp, resp.keys)
       end
 
       def set_current_program_scene(name)
-        payload = { sceneName: name }
-        call("SetCurrentProgramScene", payload)
+        payload = {sceneName: name}
+        call(:SetCurrentProgramScene, payload)
       end
 
       def get_current_preview_scene
-        resp = call("GetCurrentPreviewScene")
+        resp = call(:GetCurrentPreviewScene)
         Mixin::Response.new(resp, resp.keys)
       end
 
       def set_current_preview_scene(name)
-        payload = { sceneName: name }
-        call("SetCurrentPreviewScene", payload)
+        payload = {sceneName: name}
+        call(:SetCurrentPreviewScene, payload)
       end
 
       def create_scene(name)
-        payload = { sceneName: name }
-        call("CreateScene", payload)
+        payload = {sceneName: name}
+        call(:CreateScene, payload)
       end
 
       def remove_scene(name)
-        payload = { sceneName: name }
-        call("RemoveScene", payload)
+        payload = {sceneName: name}
+        call(:RemoveScene, payload)
       end
 
       def set_scene_name(old_name, new_name)
-        payload = { sceneName: old_name, newSceneName: new_name }
-        call("SetSceneName", payload)
+        payload = {sceneName: old_name, newSceneName: new_name}
+        call(:SetSceneName, payload)
       end
 
       def get_scene_scene_transition_override(name)
-        payload = { sceneName: name }
-        resp = call("GetSceneSceneTransitionOverride", payload)
+        payload = {sceneName: name}
+        resp = call(:GetSceneSceneTransitionOverride, payload)
         Mixin::Response.new(resp, resp.keys)
       end
 
@@ -315,23 +315,23 @@ module OBSWS
           transitionName: tr_name,
           transitionDuration: tr_duration
         }
-        call("SetSceneSceneTransitionOverride", payload)
+        call(:SetSceneSceneTransitionOverride, payload)
       end
 
       def get_input_list(kind = nil)
-        payload = { inputKind: kind }
-        resp = call("GetInputList", payload)
+        payload = {inputKind: kind}
+        resp = call(:GetInputList, payload)
         Mixin::Response.new(resp, resp.keys)
       end
 
       def get_input_kind_list(unversioned)
-        payload = { unversioned: unversioned }
-        resp = call("GetInputKindList", payload)
+        payload = {unversioned: unversioned}
+        resp = call(:GetInputKindList, payload)
         Mixin::Response.new(resp, resp.keys)
       end
 
       def get_special_inputs
-        resp = call("GetSpecialInputs")
+        resp = call(:GetSpecialInputs)
         Mixin::Response.new(resp, resp.keys)
       end
 
@@ -349,57 +349,57 @@ module OBSWS
           inputSettings: input_settings,
           sceneItemEnabled: scene_item_enabled
         }
-        resp = call("CreateInput", payload)
+        resp = call(:CreateInput, payload)
         Mixin::Response.new(resp, resp.keys)
       end
 
       def remove_input(name)
-        payload = { inputName: name }
-        call("RemoveInput", payload)
+        payload = {inputName: name}
+        call(:RemoveInput, payload)
       end
 
       def set_input_name(old_name, new_name)
-        payload = { inputName: old_name, newInputName: new_name }
-        call("SetInputName", payload)
+        payload = {inputName: old_name, newInputName: new_name}
+        call(:SetInputName, payload)
       end
 
       def get_input_default_settings(kind)
-        payload = { inputKind: kind }
-        resp = call("GetInputDefaultSettings", payload)
+        payload = {inputKind: kind}
+        resp = call(:GetInputDefaultSettings, payload)
         Mixin::Response.new(resp, resp.keys)
       end
 
       def get_input_settings(name)
-        payload = { inputName: name }
-        resp = call("GetInputSettings", payload)
+        payload = {inputName: name}
+        resp = call(:GetInputSettings, payload)
         Mixin::Response.new(resp, resp.keys)
       end
 
       def set_input_settings(name, settings, overlay)
-        payload = { inputName: name, inputSettings: settings, overlay: overlay }
-        call("SetInputSettings", payload)
+        payload = {inputName: name, inputSettings: settings, overlay: overlay}
+        call(:SetInputSettings, payload)
       end
 
       def get_input_mute(name)
-        payload = { inputName: name }
-        resp = call("GetInputMute", payload)
+        payload = {inputName: name}
+        resp = call(:GetInputMute, payload)
         Mixin::Response.new(resp, resp.keys)
       end
 
       def set_input_mute(name, muted)
-        payload = { inputName: name, inputMuted: muted }
-        call("SetInputMute", payload)
+        payload = {inputName: name, inputMuted: muted}
+        call(:SetInputMute, payload)
       end
 
       def toggle_input_mute(name)
-        payload = { inputName: name }
-        resp = call("ToggleInputMute", payload)
+        payload = {inputName: name}
+        resp = call(:ToggleInputMute, payload)
         Mixin::Response.new(resp, resp.keys)
       end
 
       def get_input_volume(name)
-        payload = { inputName: name }
-        resp = call("GetInputVolume", payload)
+        payload = {inputName: name}
+        resp = call(:GetInputVolume, payload)
         Mixin::Response.new(resp, resp.keys)
       end
 
@@ -409,117 +409,117 @@ module OBSWS
           inputVolumeMul: vol_mul,
           inputVolumeDb: vol_db
         }
-        call("SetInputVolume", payload)
+        call(:SetInputVolume, payload)
       end
 
       def get_input_audio_balance(name)
-        payload = { inputName: name }
-        resp = call("GetInputAudioBalance", payload)
+        payload = {inputName: name}
+        resp = call(:GetInputAudioBalance, payload)
         Mixin::Response.new(resp, resp.keys)
       end
 
       def set_input_audio_balance(name, balance)
-        payload = { inputName: name, inputAudioBalance: balance }
-        call("SetInputAudioBalance", payload)
+        payload = {inputName: name, inputAudioBalance: balance}
+        call(:SetInputAudioBalance, payload)
       end
 
       def get_input_audio_sync_offset(name)
-        payload = { inputName: name }
-        resp = call("GetInputAudioSyncOffset", payload)
+        payload = {inputName: name}
+        resp = call(:GetInputAudioSyncOffset, payload)
         Mixin::Response.new(resp, resp.keys)
       end
 
       def set_input_audio_sync_offset(name, offset)
-        payload = { inputName: name, inputAudioSyncOffset: offset }
-        call("SetInputAudioSyncOffset", payload)
+        payload = {inputName: name, inputAudioSyncOffset: offset}
+        call(:SetInputAudioSyncOffset, payload)
       end
 
       def get_input_audio_monitor_type(name)
-        payload = { inputName: name }
-        resp = call("GetInputAudioMonitorType", payload)
+        payload = {inputName: name}
+        resp = call(:GetInputAudioMonitorType, payload)
         Mixin::Response.new(resp, resp.keys)
       end
 
       def set_input_audio_monitor_type(name, mon_type)
-        payload = { inputName: name, monitorType: mon_type }
-        call("SetInputAudioMonitorType", payload)
+        payload = {inputName: name, monitorType: mon_type}
+        call(:SetInputAudioMonitorType, payload)
       end
 
       def get_input_audio_tracks(name)
-        payload = { inputName: name }
-        resp = call("GetInputAudioTracks", payload)
+        payload = {inputName: name}
+        resp = call(:GetInputAudioTracks, payload)
         Mixin::Response.new(resp, resp.keys)
       end
 
       def set_input_audio_tracks(name, track)
-        payload = { inputName: name, inputAudioTracks: track }
-        call("SetInputAudioTracks", payload)
+        payload = {inputName: name, inputAudioTracks: track}
+        call(:SetInputAudioTracks, payload)
       end
 
       def get_input_properties_list_property_items(input_name, prop_name)
-        payload = { inputName: input_name, propertyName: prop_name }
-        resp = call("GetInputPropertiesListPropertyItems", payload)
+        payload = {inputName: input_name, propertyName: prop_name}
+        resp = call(:GetInputPropertiesListPropertyItems, payload)
         Mixin::Response.new(resp, resp.keys)
       end
 
       def press_input_properties_button(input_name, prop_name)
-        payload = { inputName: input_name, propertyName: prop_name }
-        call("PressInputPropertiesButton", payload)
+        payload = {inputName: input_name, propertyName: prop_name}
+        call(:PressInputPropertiesButton, payload)
       end
 
       def get_transition_kind_list
-        resp = call("GetTransitionKindList")
+        resp = call(:GetTransitionKindList)
         Mixin::Response.new(resp, resp.keys)
       end
 
       def get_scene_transition_list
-        resp = call("GetSceneTransitionList")
+        resp = call(:GetSceneTransitionList)
         Mixin::Response.new(resp, resp.keys)
       end
 
       def get_current_scene_transition
-        resp = call("GetCurrentSceneTransition")
+        resp = call(:GetCurrentSceneTransition)
         Mixin::Response.new(resp, resp.keys)
       end
 
       def set_current_scene_transition(name)
-        payload = { transitionName: name }
-        call("SetCurrentSceneTransition", payload)
+        payload = {transitionName: name}
+        call(:SetCurrentSceneTransition, payload)
       end
 
       def set_current_scene_transition_duration(duration)
-        payload = { transitionDuration: duration }
-        call("SetCurrentSceneTransitionDuration", payload)
+        payload = {transitionDuration: duration}
+        call(:SetCurrentSceneTransitionDuration, payload)
       end
 
       def set_current_scene_transition_settings(settings, overlay = nil)
-        payload = { transitionSettings: settings, overlay: overlay }
-        call("SetCurrentSceneTransitionSettings", payload)
+        payload = {transitionSettings: settings, overlay: overlay}
+        call(:SetCurrentSceneTransitionSettings, payload)
       end
 
       def get_current_scene_transition_cursor
-        resp = call("GetCurrentSceneTransitionCursor")
+        resp = call(:GetCurrentSceneTransitionCursor)
         Mixin::Response.new(resp, resp.keys)
       end
 
       def trigger_studio_mode_transition
-        call("TriggerStudioModeTransition")
+        call(:TriggerStudioModeTransition)
       end
 
       def set_t_bar_position(pos, release = nil)
-        payload = { position: pos, release: release }
-        call("SetTBarPosition", payload)
+        payload = {position: pos, release: release}
+        call(:SetTBarPosition, payload)
       end
 
       def get_source_filter_list(name)
-        payload = { sourceName: name }
-        resp = call("GetSourceFilterList", payload)
+        payload = {sourceName: name}
+        resp = call(:GetSourceFilterList, payload)
         Mixin::Response.new(resp, resp.keys)
       end
 
       def get_source_filter_default_settings(kind)
-        payload = { filterKind: kind }
-        resp = call("GetSourceFilterDefaultSettings", payload)
+        payload = {filterKind: kind}
+        resp = call(:GetSourceFilterDefaultSettings, payload)
         Mixin::Response.new(resp, resp.keys)
       end
 
@@ -535,12 +535,12 @@ module OBSWS
           filterKind: filter_kind,
           filterSettings: filter_settings
         }
-        call("CreateSourceFilter", payload)
+        call(:CreateSourceFilter, payload)
       end
 
       def remove_source_filter(source_name, filter_name)
-        payload = { sourceName: source_name, filterName: filter_name }
-        call("RemoveSourceFilter", payload)
+        payload = {sourceName: source_name, filterName: filter_name}
+        call(:RemoveSourceFilter, payload)
       end
 
       def set_source_filter_name(source_name, old_filter_name, new_filter_name)
@@ -549,12 +549,12 @@ module OBSWS
           filterName: old_filter_name,
           newFilterName: new_filter_name
         }
-        call("SetSourceFilterName", payload)
+        call(:SetSourceFilterName, payload)
       end
 
       def get_source_filter(source_name, filter_name)
-        payload = { sourceName: source_name, filterName: filter_name }
-        resp = call("GetSourceFilter", payload)
+        payload = {sourceName: source_name, filterName: filter_name}
+        resp = call(:GetSourceFilter, payload)
         Mixin::Response.new(resp, resp.keys)
       end
 
@@ -564,7 +564,7 @@ module OBSWS
           filterName: filter_name,
           filterIndex: filter_index
         }
-        call("SetSourceFilterIndex", payload)
+        call(:SetSourceFilterIndex, payload)
       end
 
       def set_source_filter_settings(
@@ -579,7 +579,7 @@ module OBSWS
           filterSettings: settings,
           overlay: overlay
         }
-        call("SetSourceFilterSettings", payload)
+        call(:SetSourceFilterSettings, payload)
       end
 
       def set_source_filter_enabled(source_name, filter_name, enabled)
@@ -588,18 +588,18 @@ module OBSWS
           filterName: filter_name,
           filterEnabled: enabled
         }
-        call("SetSourceFilterEnabled", payload)
+        call(:SetSourceFilterEnabled, payload)
       end
 
       def get_scene_item_list(name)
-        payload = { sceneName: name }
-        resp = call("GetSceneItemList", payload)
+        payload = {sceneName: name}
+        resp = call(:GetSceneItemList, payload)
         Mixin::Response.new(resp, resp.keys)
       end
 
       def get_group_scene_item_list(name)
-        payload = { sceneName: name }
-        resp = call("GetGroupSceneItemList", payload)
+        payload = {sceneName: name}
+        resp = call(:GetGroupSceneItemList, payload)
         Mixin::Response.new(resp, resp.keys)
       end
 
@@ -609,7 +609,7 @@ module OBSWS
           sourceName: source_name,
           searchOffset: offset
         }
-        resp = call("GetSceneItemId", payload)
+        resp = call(:GetSceneItemId, payload)
         Mixin::Response.new(resp, resp.keys)
       end
 
@@ -619,13 +619,13 @@ module OBSWS
           sourceName: source_name,
           sceneItemEnabled: enabled
         }
-        resp = call("CreateSceneItem", payload)
+        resp = call(:CreateSceneItem, payload)
         Mixin::Response.new(resp, resp.keys)
       end
 
       def remove_scene_item(scene_name, item_id)
-        payload = { sceneName: scene_name, sceneItemId: item_id }
-        call("RemoveSceneItem", payload)
+        payload = {sceneName: scene_name, sceneItemId: item_id}
+        call(:RemoveSceneItem, payload)
       end
 
       def duplicate_scene_item(scene_name, item_id, dest_scene_name = nil)
@@ -634,13 +634,13 @@ module OBSWS
           sceneItemId: item_id,
           destinationSceneName: dest_scene_name
         }
-        resp = call("DuplicateSceneItem", payload)
+        resp = call(:DuplicateSceneItem, payload)
         Mixin::Response.new(resp, resp.keys)
       end
 
       def get_scene_item_transform(scene_name, item_id)
-        payload = { sceneName: scene_name, sceneItemId: item_id }
-        resp = call("GetSceneItemTransform", payload)
+        payload = {sceneName: scene_name, sceneItemId: item_id}
+        resp = call(:GetSceneItemTransform, payload)
         Mixin::Response.new(resp, resp.keys)
       end
 
@@ -650,12 +650,12 @@ module OBSWS
           sceneItemId: item_id,
           sceneItemTransform: transform
         }
-        call("SetSceneItemTransform", payload)
+        call(:SetSceneItemTransform, payload)
       end
 
       def get_scene_item_enabled(scene_name, item_id)
-        payload = { sceneName: scene_name, sceneItemId: item_id }
-        resp = call("GetSceneItemEnabled", payload)
+        payload = {sceneName: scene_name, sceneItemId: item_id}
+        resp = call(:GetSceneItemEnabled, payload)
         Mixin::Response.new(resp, resp.keys)
       end
 
@@ -665,12 +665,12 @@ module OBSWS
           sceneItemId: item_id,
           sceneItemEnabled: enabled
         }
-        call("SetSceneItemEnabled", payload)
+        call(:SetSceneItemEnabled, payload)
       end
 
       def get_scene_item_locked(scene_name, item_id)
-        payload = { sceneName: scene_name, sceneItemId: item_id }
-        resp = call("GetSceneItemLocked", payload)
+        payload = {sceneName: scene_name, sceneItemId: item_id}
+        resp = call(:GetSceneItemLocked, payload)
         Mixin::Response.new(resp, resp.keys)
       end
 
@@ -680,12 +680,12 @@ module OBSWS
           sceneItemId: item_id,
           sceneItemLocked: locked
         }
-        call("SetSceneItemLocked", payload)
+        call(:SetSceneItemLocked, payload)
       end
 
       def get_scene_item_index(scene_name, item_id)
-        payload = { sceneName: scene_name, sceneItemId: item_id }
-        resp = call("GetSceneItemIndex", payload)
+        payload = {sceneName: scene_name, sceneItemId: item_id}
+        resp = call(:GetSceneItemIndex, payload)
         Mixin::Response.new(resp, resp.keys)
       end
 
@@ -693,14 +693,14 @@ module OBSWS
         payload = {
           sceneName: scene_name,
           sceneItemId: item_id,
-          sceneItemLocked: item_index
+          sceneItemIndex: item_index
         }
-        call("SetSceneItemIndex", payload)
+        call(:SetSceneItemIndex, payload)
       end
 
       def get_scene_item_blend_mode(scene_name, item_id)
-        payload = { sceneName: scene_name, sceneItemId: item_id }
-        resp = call("GetSceneItemBlendMode", payload)
+        payload = {sceneName: scene_name, sceneItemId: item_id}
+        resp = call(:GetSceneItemBlendMode, payload)
         Mixin::Response.new(resp, resp.keys)
       end
 
@@ -710,192 +710,192 @@ module OBSWS
           sceneItemId: item_id,
           sceneItemBlendMode: blend
         }
-        call("SetSceneItemBlendMode", payload)
+        call(:SetSceneItemBlendMode, payload)
       end
 
       def get_virtual_cam_status
-        resp = call("GetVirtualCamStatus")
+        resp = call(:GetVirtualCamStatus)
         Mixin::Response.new(resp, resp.keys)
       end
 
       def toggle_virtual_cam
-        resp = call("ToggleVirtualCam")
+        resp = call(:ToggleVirtualCam)
         Mixin::Response.new(resp, resp.keys)
       end
 
       def start_virtual_cam
-        call("StartVirtualCam")
+        call(:StartVirtualCam)
       end
 
       def stop_virtual_cam
-        call("StopVirtualCam")
+        call(:StopVirtualCam)
       end
 
       def get_replay_buffer_status
-        resp = call("GetReplayBufferStatus")
+        resp = call(:GetReplayBufferStatus)
         Mixin::Response.new(resp, resp.keys)
       end
 
       def toggle_replay_buffer
-        resp = call("ToggleReplayBuffer")
+        resp = call(:ToggleReplayBuffer)
         Mixin::Response.new(resp, resp.keys)
       end
 
       def start_replay_buffer
-        call("StartReplayBuffer")
+        call(:StartReplayBuffer)
       end
 
       def stop_replay_buffer
-        call("StopReplayBuffer")
+        call(:StopReplayBuffer)
       end
 
       def save_replay_buffer
-        call("SaveReplayBuffer")
+        call(:SaveReplayBuffer)
       end
 
       def get_last_replay_buffer_replay
-        resp = call("GetLastReplayBufferReplay")
+        resp = call(:GetLastReplayBufferReplay)
         Mixin::Response.new(resp, resp.keys)
       end
 
       def get_output_list
-        resp = call("GetOutputList")
+        resp = call(:GetOutputList)
         Mixin::Response.new(resp, resp.keys)
       end
 
       def get_output_status(name)
-        payload = { outputName: name }
-        resp = call("GetOutputStatus", payload)
+        payload = {outputName: name}
+        resp = call(:GetOutputStatus, payload)
         Mixin::Response.new(resp, resp.keys)
       end
 
       def toggle_output(name)
-        payload = { outputName: name }
-        resp = call("ToggleOutput", payload)
+        payload = {outputName: name}
+        resp = call(:ToggleOutput, payload)
         Mixin::Response.new(resp, resp.keys)
       end
 
       def start_output(name)
-        payload = { outputName: name }
-        call("StartOutput", payload)
+        payload = {outputName: name}
+        call(:StartOutput, payload)
       end
 
       def stop_output(name)
-        payload = { outputName: name }
-        call("StopOutput", payload)
+        payload = {outputName: name}
+        call(:StopOutput, payload)
       end
 
       def get_output_settings(name)
-        payload = { outputName: name }
-        resp = call("GetOutputSettings", payload)
+        payload = {outputName: name}
+        resp = call(:GetOutputSettings, payload)
         Mixin::Response.new(resp, resp.keys)
       end
 
       def set_output_settings(name, settings)
-        payload = { outputName: name, outputSettings: settings }
-        call("SetOutputSettings", payload)
+        payload = {outputName: name, outputSettings: settings}
+        call(:SetOutputSettings, payload)
       end
 
       def get_stream_status
-        resp = call("GetStreamStatus")
+        resp = call(:GetStreamStatus)
         Mixin::Response.new(resp, resp.keys)
       end
 
       def toggle_stream
-        resp = call("ToggleStream")
+        resp = call(:ToggleStream)
         Mixin::Response.new(resp, resp.keys)
       end
 
       def start_stream
-        call("StartStream")
+        call(:StartStream)
       end
 
       def stop_stream
-        call("StopStream")
+        call(:StopStream)
       end
 
       def send_stream_caption(caption)
-        call("SendStreamCaption")
+        call(:SendStreamCaption)
       end
 
       def get_record_status
-        resp = call("GetRecordStatus")
+        resp = call(:GetRecordStatus)
         Mixin::Response.new(resp, resp.keys)
       end
 
       def toggle_record
-        call("ToggleRecord")
+        call(:ToggleRecord)
       end
 
       def start_record
-        call("StartRecord")
+        call(:StartRecord)
       end
 
       def stop_record
-        resp = call("StopRecord")
+        resp = call(:StopRecord)
         Mixin::Response.new(resp, resp.keys)
       end
 
       def toggle_record_pause
-        call("ToggleRecordPause")
+        call(:ToggleRecordPause)
       end
 
       def pause_record
-        call("PauseRecord")
+        call(:PauseRecord)
       end
 
       def resume_record
-        call("ResumeRecord")
+        call(:ResumeRecord)
       end
 
       def get_media_input_status(name)
-        payload = { inputName: name }
-        resp = call("GetMediaInputStatus", payload)
+        payload = {inputName: name}
+        resp = call(:GetMediaInputStatus, payload)
         Mixin::Response.new(resp, resp.keys)
       end
 
       def set_media_input_cursor(name, cursor)
-        payload = { inputName: name, mediaCursor: cursor }
-        call("SetMediaInputCursor", payload)
+        payload = {inputName: name, mediaCursor: cursor}
+        call(:SetMediaInputCursor, payload)
       end
 
       def offset_media_input_cursor(name, offset)
-        payload = { inputName: name, mediaCursorOffset: offset }
-        call("OffsetMediaInputCursor", payload)
+        payload = {inputName: name, mediaCursorOffset: offset}
+        call(:OffsetMediaInputCursor, payload)
       end
 
       def trigger_media_input_action(name, action)
-        payload = { inputName: name, mediaAction: action }
-        call("TriggerMediaInputAction", payload)
+        payload = {inputName: name, mediaAction: action}
+        call(:TriggerMediaInputAction, payload)
       end
 
       def get_studio_mode_enabled
-        resp = call("GetStudioModeEnabled")
+        resp = call(:GetStudioModeEnabled)
         Mixin::Response.new(resp, resp.keys)
       end
 
       def set_studio_mode_enabled(enabled)
-        payload = { studioModeEnabled: enabled }
-        call("SetStudioModeEnabled", payload)
+        payload = {studioModeEnabled: enabled}
+        call(:SetStudioModeEnabled, payload)
       end
 
       def open_input_properties_dialog(name)
-        payload = { inputName: name }
-        call("OpenInputPropertiesDialog", payload)
+        payload = {inputName: name}
+        call(:OpenInputPropertiesDialog, payload)
       end
 
       def open_input_filters_dialog(name)
-        payload = { inputName: name }
-        call("OpenInputFiltersDialog", payload)
+        payload = {inputName: name}
+        call(:OpenInputFiltersDialog, payload)
       end
 
       def open_input_interact_dialog(name)
-        payload = { inputName: name }
-        call("OpenInputInteractDialog", payload)
+        payload = {inputName: name}
+        call(:OpenInputInteractDialog, payload)
       end
 
       def get_monitor_list
-        resp = call("GetMonitorList")
+        resp = call(:GetMonitorList)
         Mixin::Response.new(resp, resp.keys)
       end
     end
