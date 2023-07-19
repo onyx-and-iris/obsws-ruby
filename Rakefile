@@ -1,6 +1,6 @@
 require "minitest/test_task"
 
-HERE = File.expand_path File.dirname(__FILE__)
+HERE = __dir__
 
 Minitest::TestTask.create(:test) do |t|
   t.libs << "test"
