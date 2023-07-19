@@ -2,7 +2,7 @@ require_relative "../minitest_helper"
 
 class AttrsTest < OBSWSTest
   def test_get_version_attrs
-    resp = @@r_client.get_version
+    resp = OBSWSTest.r_client.get_version
     assert resp.attrs ==
       %w[
         available_requests
