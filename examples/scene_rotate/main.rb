@@ -1,19 +1,18 @@
 require "obsws"
-require "perfect_toml"
+require "yaml"
 
 OBSWS::LOGGER.info!
 
-def conn_from_toml
-  PerfectTOML.load_file("obs.toml", symbolize_names: true)[:connection]
+def conn_from_yaml
+  YAML.load_file("obs.yml", symbolize_names: true)[:connection]
 end
 
 def main
-  r_client = OBSWS::Requests::Client.new(**conn_from_toml)
-  r_client.run do
-    resp = r_client.get_scene_list
-    resp.scenes.reverse.each do |s|
-      puts "Switching to scene #{s[:sceneName]}"
-      r_client.set_current_program_scene(s[:sceneName])
+  OBSWS::Requests::Client.new(**conn_from_yaml).run do |client|
+    resp = client.get_scene_list
+    resp.scenes.reverse_each do |scene|
+      puts "Switching to scene #{scene[:sceneName]}"
+      client.set_current_program_scene(scene[:sceneName])
       sleep(0.5)
     end
   end

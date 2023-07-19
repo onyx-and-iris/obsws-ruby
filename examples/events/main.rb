@@ -1,9 +1,9 @@
 require "obsws"
-require "perfect_toml"
+require "yaml"
 
 OBSWS::LOGGER.info!
 
-class Observer
+class Main
   attr_reader :running
 
   def initialize(**kwargs)
@@ -13,6 +13,10 @@ class Observer
 
     puts info.join("\n")
     @running = true
+  end
+
+  def run
+    sleep(0.1) while running
   end
 
   def info
@@ -45,14 +49,8 @@ class Observer
   end
 end
 
-def conn_from_toml
-  PerfectTOML.load_file("obs.toml", symbolize_names: true)[:connection]
+def conn_from_yaml
+  YAML.load_file("obs.yml", symbolize_names: true)[:connection]
 end
 
-def main
-  o = Observer.new(**conn_from_toml)
-
-  sleep(0.1) while o.running
-end
-
-main if $0 == __FILE__
+Main.new(**conn_from_yaml).run if $0 == __FILE__
