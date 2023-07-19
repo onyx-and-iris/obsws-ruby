@@ -1,15 +1,15 @@
 [![Gem Version](https://badge.fury.io/rb/obsws.svg)](https://badge.fury.io/rb/obsws)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://github.com/onyx-and-iris/obsws-ruby/blob/dev/LICENSE)
-[![code style: prettier](https://img.shields.io/badge/code_style-prettier-ff69b4.svg?style=flat-square)](https://github.com/prettier/plugin-ruby)
+[![Ruby Code Style](https://img.shields.io/badge/code_style-standard-violet.svg)](https://github.com/standardrb/standard)
 
 # A Ruby wrapper around OBS Studio WebSocket v5.0
 
 ## Requirements
 
--   [OBS Studio](https://obsproject.com/)
--   [OBS Websocket v5 Plugin](https://github.com/obsproject/obs-websocket/releases/tag/5.0.0)
-    -   With the release of OBS Studio version 28, Websocket plugin is included by default. But it should be manually installed for earlier versions of OBS.
--   Ruby 3.0 or greater
+- [OBS Studio](https://obsproject.com/)
+- [OBS Websocket v5 Plugin](https://github.com/obsproject/obs-websocket/releases/tag/5.0.0)
+  - With the release of OBS Studio version 28, Websocket plugin is included by default. But it should be manually installed for earlier versions of OBS.
+- Ruby 3.0 or greater
 
 ## Installation
 
@@ -34,17 +34,12 @@ pass `host`, `port` and `password` as keyword arguments.
 require "obsws"
 
 def main
-  r_client =
-    OBSWS::Requests::Client.new(
-      host: "localhost",
-      port: 4455,
-      password: "strongpassword"
-    )
-
-  r_client.run do
-    # Toggle the mute state of your Mic input
-    r_client.toggle_input_mute("Mic/Aux")
-  end
+  OBSWS::Requests::Client
+    .new(host: "localhost", port: 4455, password: "strongpassword")
+    .run do |client|
+      # Toggle the mute state of your Mic input
+      client.toggle_input_mute("Mic/Aux")
+    end
 end
 
 main if $0 == __FILE__
@@ -140,4 +135,4 @@ bundle exec rake -v
 
 For the full documentation:
 
--   [OBS Websocket SDK](https://github.com/obsproject/obs-websocket/blob/master/docs/generated/protocol.md#obs-websocket-501-protocol)
+- [OBS Websocket SDK](https://github.com/obsproject/obs-websocket/blob/master/docs/generated/protocol.md#obs-websocket-501-protocol)
