@@ -2,7 +2,6 @@ require_relative "../../lib/obsws"
 require "yaml"
 
 OBSWS::LOGGER.info!
-DEVICE = "Desktop Audio"
 
 module LevelTypes
   VU = 0
@@ -11,6 +10,8 @@ module LevelTypes
 end
 
 class Main
+  DEVICE = "Desktop Audio"
+
   def initialize(**kwargs)
     subs = OBSWS::Events::SUBS::LOW_VOLUME | OBSWS::Events::SUBS::INPUTVOLUMEMETERS
     @e_client = OBSWS::Events::Client.new(subs:, **kwargs)
@@ -19,7 +20,7 @@ class Main
 
   def run
     puts "press <Enter> to quit"
-    exit if gets.chomp.empty?
+    loop { break if gets.chomp.empty? }
   end
 
   def on_input_mute_state_changed(data)
