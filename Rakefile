@@ -14,7 +14,7 @@ task :events do
   ruby filepath
 end
 task :levels do
-  filepath = File.join(HERE, "examples", "events", "main.rb")
+  filepath = File.join(HERE, "examples", "levels", "main.rb")
   ruby filepath
 end
 task :scene_rotate do
