@@ -1,4 +1,4 @@
-require "obsws"
+require_relative "../../lib/obsws"
 require "yaml"
 
 OBSWS::LOGGER.info!
@@ -45,4 +45,4 @@ def conn_from_yaml
   YAML.load_file("obs.yml", symbolize_names: true)[:connection]
 end
 
-Main.new(**conn_from_yaml).run if $0 == __FILE__
+Main.new(**conn_from_yaml).run if $PROGRAM_NAME == __FILE__

@@ -1,6 +1,7 @@
 require_relative "lib/obsws"
 
-def main
+class Main
+  def run
     OBSWS::Requests::Client.new(
       host: "localhost",
       port: 4455,
@@ -9,6 +10,7 @@ def main
       # Toggle the mute state of your Mic input
       client.toggle_input_mute("Mic/Aux")
     end
+  end
 end
 
-main if $0 == __FILE__
+Main.new.run if $PROGRAM_NAME == __FILE__

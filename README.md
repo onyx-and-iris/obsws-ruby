@@ -28,37 +28,39 @@ bundle install
 
 #### Example `main.rb`
 
-pass `host`, `port` and `password` as keyword arguments.
+Pass `host`, `port` and `password` as keyword arguments.
 
 ```ruby
 require "obsws"
 
-def main
-  OBSWS::Requests::Client
-    .new(host: "localhost", port: 4455, password: "strongpassword")
-    .run do |client|
-      # Toggle the mute state of your Mic input
-      client.toggle_input_mute("Mic/Aux")
-    end
+class Main
+  def run
+    OBSWS::Requests::Client
+      .new(host: "localhost", port: 4455, password: "strongpassword")
+      .run do |client|
+        # Toggle the mute state of your Mic input
+        client.toggle_input_mute("Mic/Aux")
+      end
+  end
 end
 
-main if $0 == __FILE__
+Main.new.run if $PROGRAM_NAME == __FILE__
 ```
+
+Passing OBSWS::Requests::Client.run a block closes the socket once the block returns.
 
 ### Requests
 
-Method names for requests match the API calls but snake cased. `run` accepts a block that closes the socket once you are done.
+Method names for requests match the API calls but snake cased.
 
 example:
 
 ```ruby
-r_client.run do
-  # GetVersion
-  resp = r_client.get_version
+# GetVersion
+resp = r_client.get_version
 
-  # SetCurrentProgramScene
-  r_client.set_current_program_scene("BRB")
-end
+# SetCurrentProgramScene
+r_client.set_current_program_scene("BRB")
 ```
 
 For a full list of requests refer to [Requests](https://github.com/obsproject/obs-websocket/blob/master/docs/generated/protocol.md#requests)
