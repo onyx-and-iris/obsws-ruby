@@ -114,7 +114,7 @@ module OBSWS
       }
       payload[:d][:requestData] = data if data
       LOGGER.debug("sending request: #{payload}")
-      queued = @driver.text(JSON.generate(payload))
+      @driver.text(JSON.generate(payload))
     end
   end
 end
