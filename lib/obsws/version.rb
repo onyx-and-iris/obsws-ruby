@@ -7,11 +7,11 @@ module OBSWS
     end
 
     def minor
-      2
+      3
     end
 
     def patch
-      1
+      0
     end
 
     def to_a
