@@ -2,7 +2,7 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://github.com/onyx-and-iris/obsws-ruby/blob/dev/LICENSE)
 [![Ruby Code Style](https://img.shields.io/badge/code_style-standard-violet.svg)](https://github.com/standardrb/standard)
 
-# A Ruby wrapper around OBS Studio WebSocket v5.0
+# Ruby Clients for OBS Studio WebSocket v5.0
 
 ## Requirements
 

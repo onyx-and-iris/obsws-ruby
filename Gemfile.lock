@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    obsws (0.2.1)
+    obsws (0.3.0)
       waitutil (~> 0.2.1)
       websocket-driver (~> 0.7.5)
 
@@ -52,7 +52,7 @@ GEM
       rubocop-performance (~> 1.18.0)
     unicode-display_width (2.4.2)
     waitutil (0.2.1)
-    websocket-driver (0.7.5)
+    websocket-driver (0.7.6)
       websocket-extensions (>= 0.1.0)
     websocket-extensions (0.1.5)
 
