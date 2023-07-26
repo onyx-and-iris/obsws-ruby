@@ -13,7 +13,6 @@ Gem::Specification.new do |spec|
   spec.extra_rdoc_files = Dir["README.md", "CHANGELOG.md", "LICENSE"]
   spec.homepage = "https://rubygems.org/gems/obsws"
   spec.license = "MIT"
-  spec.add_runtime_dependency "observer", "~> 0.1.1"
   spec.add_runtime_dependency "websocket-driver", "~> 0.7.5"
   spec.add_runtime_dependency "waitutil", "~> 0.2.1"
   spec.add_development_dependency "standard", "~> 1.30"

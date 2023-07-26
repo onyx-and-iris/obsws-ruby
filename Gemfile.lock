@@ -2,7 +2,6 @@ PATH
   remote: .
   specs:
     obsws (0.2.0)
-      observer (~> 0.1.1)
       waitutil (~> 0.2.1)
       websocket-driver (~> 0.7.5)
 
@@ -14,7 +13,6 @@ GEM
     language_server-protocol (3.17.0.3)
     lint_roller (1.1.0)
     minitest (5.16.3)
-    observer (0.1.1)
     parallel (1.23.0)
     parser (3.2.2.3)
       ast (~> 2.4.1)
