@@ -1,29 +1,16 @@
-require "socket"
-require "websocket/driver"
 require "digest/sha2"
 require "json"
 require "waitutil"
 
-require_relative "mixin"
+require_relative "driver"
 require_relative "error"
 require_relative "logger"
+require_relative "mixin"
 
 module OBSWS
-  class Socket
-    attr_reader :url
-
-    def initialize(url, socket)
-      @url = url
-      @socket = socket
-    end
-
-    def write(s)
-      @socket.write(s)
-    end
-  end
-
   class Base
     include Logging
+    include Driver
     include Mixin::OPCodes
 
     attr_reader :closed
@@ -34,42 +21,13 @@ module OBSWS
       port = kwargs[:port] || 4455
       @password = kwargs[:password] || ""
       @subs = kwargs[:subs] || 0
-
-      @socket = TCPSocket.new(host, port)
-      @driver =
-        WebSocket::Driver.client(Socket.new("ws://#{host}:#{port}", @socket))
-      @driver.on :open do |msg|
-        logger.debug("driver socket open")
-      end
-      @driver.on :close do |msg|
-        logger.debug("driver socket closed")
-        @closed = true
-      end
-      @driver.on :message do |msg|
-        msg_handler(JSON.parse(msg.data, symbolize_names: true))
-      end
+      setup_driver(host, port)
       start_driver
       WaitUtil.wait_for_condition(
         "successful identification",
         delay_sec: 0.01,
         timeout_sec: 3
       ) { @identified }
-    end
-
-    private def start_driver
-      Thread.new do
-        @driver.start
-
-        loop do
-          @driver.parse(@socket.readpartial(4096))
-        rescue EOFError
-          break
-        end
-      end
-    end
-
-    public def stop_driver
-      @driver.close
     end
 
     private
