@@ -37,25 +37,26 @@ module OBSWS
     module Callbacks
       include Util
 
+      def observers
+        @observers ||= []
+      end
+
       def add_observer(observer)
-        @observers = [] unless defined?(@observers)
         observer = [observer] if !observer.respond_to? :each
-        observer.each { |o| @observers.append(o) }
+        observer.each { |o| observers << o }
       end
 
       def remove_observer(observer)
-        @observers.delete(observer)
+        observers.delete(observer)
       end
 
       def notify_observers(event, data)
-        if defined?(@observers)
-          @observers.each do |o|
-            if o.respond_to? "on_#{event.to_snake}"
-              if data.empty?
-                o.send("on_#{event.to_snake}")
-              else
-                o.send("on_#{event.to_snake}", data)
-              end
+        observers.each do |o|
+          if o.respond_to? "on_#{event.to_snake}"
+            if data.empty?
+              o.send("on_#{event.to_snake}")
+            else
+              o.send("on_#{event.to_snake}", data)
             end
           end
         end
