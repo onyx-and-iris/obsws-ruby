@@ -18,7 +18,7 @@ module OBSWS
       def initialize(resp, fields)
         @resp = resp
         @fields = fields
-        self.make_field_methods *fields
+        make_field_methods(*fields)
       end
 
       def empty? = @fields.empty?
@@ -33,9 +33,11 @@ module OBSWS
     end
 
     module TearDown
-      def close
-        @base_client.driver.close
+      def stop_driver
+        @base_client.stop_driver
       end
+
+      alias_method :close, :stop_driver
     end
 
     module OPCodes
