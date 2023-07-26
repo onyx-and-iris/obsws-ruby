@@ -3,11 +3,11 @@ require_relative "util"
 module OBSWS
   module Mixin
     module Meta
-      include Util
+      include Util::String
 
       def make_field_methods(*params)
         params.each do |param|
-          define_singleton_method(param.to_s.to_snake) { @resp[param] }
+          define_singleton_method(snakecase(param.to_s)) { @resp[param] }
         end
       end
     end
@@ -23,7 +23,7 @@ module OBSWS
 
       def empty? = @fields.empty?
 
-      def attrs = @fields.map { |f| f.to_s.to_snake }
+      def attrs = @fields.map { |f| snakecase(f.to_s) }
     end
 
     class Response < MetaObject

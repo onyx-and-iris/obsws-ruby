@@ -35,7 +35,7 @@ module OBSWS
     end
 
     module Callbacks
-      include Util
+      include Util::String
 
       def observers
         @observers ||= []
@@ -52,11 +52,11 @@ module OBSWS
 
       def notify_observers(event, data)
         observers.each do |o|
-          if o.respond_to? "on_#{event.to_snake}"
+          if o.respond_to? "on_#{snakecase(event)}"
             if data.empty?
-              o.send("on_#{event.to_snake}")
+              o.send("on_#{snakecase(event)}")
             else
-              o.send("on_#{event.to_snake}", data)
+              o.send("on_#{snakecase(event)}", data)
             end
           end
         end
