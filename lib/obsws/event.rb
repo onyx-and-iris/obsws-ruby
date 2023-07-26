@@ -71,7 +71,7 @@ module OBSWS
       def initialize(**kwargs)
         kwargs[:subs] ||= SUBS::LOW_VOLUME
         @base_client = Base.new(**kwargs)
-        logger.info("#{self} succesfully identified with server")
+        logger.info("#{self} successfully identified with server")
         @base_client.updater = ->(op_code, data) {
           if op_code == Mixin::OPCodes::EVENT
             logger.debug("received: #{data}")
