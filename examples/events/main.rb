@@ -11,7 +11,7 @@ class Main
     @e_client = OBSWS::Events::Client.new(**kwargs)
     @e_client.add_observer(self)
 
-    puts info.join("\n")
+    puts infostring
     @running = true
   end
 
@@ -19,14 +19,14 @@ class Main
     sleep(0.1) while running
   end
 
-  def info
+  def infostring
     resp = @r_client.get_version
     [
       "Using obs version:",
       resp.obs_version,
       "With websocket version:",
       resp.obs_web_socket_version
-    ]
+    ].join("\n")
   end
 
   def on_current_program_scene_changed(data)
