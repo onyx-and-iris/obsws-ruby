@@ -1,7 +1,6 @@
 require_relative "../../lib/obsws"
 require "yaml"
 
-OBSWS::LOGGER.info!
 
 class Main
   def conn_from_yaml
