@@ -4,18 +4,21 @@ require_relative "base"
 require_relative "error"
 require_relative "util"
 require_relative "mixin"
+require_relative "logger"
 
 module OBSWS
   module Requests
     class Client
+      include Logging
       include Error
       include Mixin::TearDown
       include Mixin::OPCodes
 
       def initialize(**kwargs)
         @base_client = Base.new(**kwargs)
-        LOGGER.info("#{self} succesfully identified with server")
+        logger.info("#{self} succesfully identified with server")
         @base_client.updater = ->(op_code, data) {
+          logger.debug("response received: #{data}")
           @response = data if op_code == Mixin::OPCodes::REQUESTRESPONSE
         }
         @response = {requestId: 0}
@@ -56,7 +59,7 @@ module OBSWS
         @response[:responseData]
       rescue WaitUtil::TimeoutError
         msg = "no response with matching id received"
-        LOGGER.error(msg)
+        logger.error(msg)
         raise OBSWSError.new(msg)
       end
 

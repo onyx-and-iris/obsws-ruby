@@ -6,6 +6,7 @@ require "waitutil"
 
 require_relative "mixin"
 require_relative "error"
+require_relative "logger"
 
 module OBSWS
   class Socket
@@ -22,6 +23,7 @@ module OBSWS
   end
 
   class Base
+    include Logging
     include Mixin::OPCodes
 
     attr_reader :closed
@@ -37,14 +39,13 @@ module OBSWS
       @driver =
         WebSocket::Driver.client(Socket.new("ws://#{host}:#{port}", @socket))
       @driver.on :open do |msg|
-        LOGGER.debug("driver socket open")
+        logger.debug("driver socket open")
       end
       @driver.on :close do |msg|
-        LOGGER.debug("driver socket closed")
+        logger.debug("driver socket closed")
         @closed = true
       end
       @driver.on :message do |msg|
-        LOGGER.debug("received: #{msg.data}")
         msg_handler(JSON.parse(msg.data, symbolize_names: true))
       end
       start_driver
@@ -91,7 +92,7 @@ module OBSWS
         if @password.empty?
           raise OBSWSError("auth enabled but no password provided")
         end
-        LOGGER.info("initiating authentication")
+        logger.info("initiating authentication")
         payload[:d][:authentication] = auth_token(**auth)
       end
       @driver.text(JSON.generate(payload))
@@ -117,7 +118,7 @@ module OBSWS
         }
       }
       payload[:d][:requestData] = data if data
-      LOGGER.debug("sending request: #{payload}")
+      logger.debug("sending request: #{payload}")
       @driver.text(JSON.generate(payload))
     end
   end

@@ -2,6 +2,7 @@ require "json"
 
 require_relative "util"
 require_relative "mixin"
+require_relative "logger"
 
 module OBSWS
   module Events
@@ -62,6 +63,7 @@ module OBSWS
     end
 
     class Client
+      include Logging
       include Callbacks
       include Mixin::TearDown
       include Mixin::OPCodes
@@ -69,9 +71,10 @@ module OBSWS
       def initialize(**kwargs)
         kwargs[:subs] ||= SUBS::LOW_VOLUME
         @base_client = Base.new(**kwargs)
-        LOGGER.info("#{self} succesfully identified with server")
+        logger.info("#{self} succesfully identified with server")
         @base_client.updater = ->(op_code, data) {
           if op_code == Mixin::OPCodes::EVENT
+            logger.debug("received: #{data}")
             event = data[:eventType]
             data = data.fetch(:eventData, {})
             notify_observers(event, Mixin::Data.new(data, data.keys))
