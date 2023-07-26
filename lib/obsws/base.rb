@@ -2,7 +2,6 @@ require "socket"
 require "websocket/driver"
 require "digest/sha2"
 require "json"
-require "observer"
 require "waitutil"
 
 require_relative "mixin"
@@ -23,10 +22,10 @@ module OBSWS
   end
 
   class Base
-    include Observable
     include Mixin::OPCodes
 
-    attr_reader :id, :driver, :closed
+    attr_reader :closed
+    attr_writer :updater
 
     def initialize(**kwargs)
       host = kwargs[:host] || "localhost"
@@ -56,7 +55,7 @@ module OBSWS
       ) { @identified }
     end
 
-    def start_driver
+    private def start_driver
       Thread.new do
         @driver.start
 
@@ -67,6 +66,12 @@ module OBSWS
         end
       end
     end
+
+    public def stop_driver
+      @driver.close
+    end
+
+    private
 
     def auth_token(salt:, challenge:)
       Digest::SHA256.base64digest(
@@ -99,12 +104,11 @@ module OBSWS
       when Mixin::OPCodes::IDENTIFIED
         @identified = true
       when Mixin::OPCodes::EVENT, Mixin::OPCodes::REQUESTRESPONSE
-        changed
-        notify_observers(data[:op], data[:d])
+        @updater.call(data[:op], data[:d])
       end
     end
 
-    def req(id, type_, data = nil)
+    public def req(id, type_, data = nil)
       payload = {
         op: Mixin::OPCodes::REQUEST,
         d: {

@@ -15,7 +15,9 @@ module OBSWS
       def initialize(**kwargs)
         @base_client = Base.new(**kwargs)
         LOGGER.info("#{self} succesfully identified with server")
-        @base_client.add_observer(self)
+        @base_client.updater = ->(op_code, data) {
+          @response = data if op_code == Mixin::OPCodes::REQUESTRESPONSE
+        }
         @response = {requestId: 0}
       end
 
@@ -26,16 +28,12 @@ module OBSWS
       def run
         yield(self)
       ensure
-        close
+        stop_driver
         WaitUtil.wait_for_condition(
           "driver to close",
           delay_sec: 0.01,
           timeout_sec: 1
         ) { @base_client.closed }
-      end
-
-      def update(op_code, data)
-        @response = data if op_code == Mixin::OPCodes::REQUESTRESPONSE
       end
 
       def call(req, data = nil)

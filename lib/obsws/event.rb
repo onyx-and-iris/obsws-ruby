@@ -70,19 +70,17 @@ module OBSWS
         kwargs[:subs] ||= SUBS::LOW_VOLUME
         @base_client = Base.new(**kwargs)
         LOGGER.info("#{self} succesfully identified with server")
-        @base_client.add_observer(self)
+        @base_client.updater = ->(op_code, data) {
+          if op_code == Mixin::OPCodes::EVENT
+            event = data[:eventType]
+            data = data.fetch(:eventData, {})
+            notify_observers(event, Mixin::Data.new(data, data.keys))
+          end
+        }
       end
 
       def to_s
         self.class.name.split("::").last(2).join("::")
-      end
-
-      def update(op_code, data)
-        if op_code == Mixin::OPCodes::EVENT
-          event = data[:eventType]
-          data = data.key?(:eventData) ? data[:eventData] : {}
-          notify_observers(event, Mixin::Data.new(data, data.keys))
-        end
       end
     end
   end
