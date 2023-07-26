@@ -16,36 +16,38 @@ module OBSWS
       end
     end
 
-    def setup_driver(host, port)
-      @socket = TCPSocket.new(host, port)
-      @driver =
-        WebSocket::Driver.client(Socket.new("ws://#{host}:#{port}", @socket))
-      @driver.on :open do |msg|
-        logger.debug("driver socket open")
-      end
-      @driver.on :close do |msg|
-        logger.debug("driver socket closed")
-        @closed = true
-      end
-      @driver.on :message do |msg|
-        msg_handler(JSON.parse(msg.data, symbolize_names: true))
-      end
-    end
-
-    private def start_driver
-      Thread.new do
-        @driver.start
-
-        loop do
-          @driver.parse(@socket.readpartial(4096))
-        rescue EOFError
-          break
+    module Director
+      def setup_driver(host, port)
+        @socket = TCPSocket.new(host, port)
+        @driver =
+          WebSocket::Driver.client(Socket.new("ws://#{host}:#{port}", @socket))
+        @driver.on :open do |msg|
+          logger.debug("driver socket open")
+        end
+        @driver.on :close do |msg|
+          logger.debug("driver socket closed")
+          @closed = true
+        end
+        @driver.on :message do |msg|
+          msg_handler(JSON.parse(msg.data, symbolize_names: true))
         end
       end
-    end
 
-    public def stop_driver
-      @driver.close
+      private def start_driver
+        Thread.new do
+          @driver.start
+
+          loop do
+            @driver.parse(@socket.readpartial(4096))
+          rescue EOFError
+            break
+          end
+        end
+      end
+
+      public def stop_driver
+        @driver.close
+      end
     end
   end
 end

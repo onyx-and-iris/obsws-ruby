@@ -10,7 +10,7 @@ require_relative "mixin"
 module OBSWS
   class Base
     include Logging
-    include Driver
+    include Driver::Director
     include Mixin::OPCodes
 
     attr_reader :closed
