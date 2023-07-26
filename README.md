@@ -114,15 +114,12 @@ For a full list of status codes refer to [Codes](https://github.com/obsproject/o
 
 ### Logging
 
-To see the raw messages set log level to debug
+To enable logs set an environmental variable `OBSWS_LOG_LEVEL` to the appropriate level.
 
-example:
+example in powershell:
 
-```ruby
-require "obsws"
-
-OBSWS::LOGGER.debug!
-...
+```powershell
+$env:OBSWS_LOG_LEVEL="DEBUG"
 ```
 
 ### Tests
