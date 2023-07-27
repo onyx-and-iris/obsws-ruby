@@ -43,7 +43,7 @@ module OBSWS
 
       def add_observer(observer)
         observer = [observer] if !observer.respond_to? :each
-        observer.each { |o| observers << o }
+        observer.each { |o| observers << o unless observers.include? o }
       end
 
       def remove_observer(observer)
@@ -52,15 +52,18 @@ module OBSWS
 
       def notify_observers(event, data)
         observers.each do |o|
-          if o.respond_to? "on_#{snakecase(event)}"
-            if data.empty?
-              o.send("on_#{snakecase(event)}")
-            else
-              o.send("on_#{snakecase(event)}", data)
+          if o.is_a? Method
+            if o.name.to_s == "on_#{snakecase(event)}"
+              data.empty? ? o.call : o.call(data)
             end
+          elsif o.respond_to? "on_#{snakecase(event)}"
+            data.empty? ? o.send("on_#{snakecase(event)}") : o.send("on_#{snakecase(event)}", data)
           end
         end
       end
+
+      alias_method :register, :add_observer
+      alias_method :deregister, :remove_observer
     end
 
     class Client

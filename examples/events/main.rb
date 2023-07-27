@@ -21,11 +21,9 @@ class Main
   def infostring
     resp = @r_client.get_version
     [
-      "Using obs version:",
-      resp.obs_version,
-      "With websocket version:",
-      resp.obs_web_socket_version
-    ].join("\n")
+      "Using obs version: #{resp.obs_version}.",
+      "With websocket version: #{resp.obs_web_socket_version}"
+    ].join(" ")
   end
 
   def on_current_program_scene_changed(data)

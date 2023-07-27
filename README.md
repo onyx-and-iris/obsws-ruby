@@ -16,13 +16,9 @@
 ### Bundler
 
 ```
-bundle add 'obsws'
+bundle add obsws
 bundle install
 ```
-
-### Gem
-
-`gem install 'obsws'`
 
 ## `Use`
 
@@ -67,23 +63,28 @@ For a full list of requests refer to [Requests](https://github.com/obsproject/ob
 
 ### Events
 
-Register an observer class and define `on_` methods for events. Method names should match the api event but snake cased.
+Register `on_` callback methods. Method names should match the api event but snake cased.
 
 example:
 
 ```ruby
 class Observer
     def initialize
-        @e_client = OBSWS::Events::Client.new(**kwargs)
-        # register class with the event client
-        @e_client.add_observer(self)
+        @e_client = OBSWS::Events::Client.new(host: "localhost", port: 4455, password: "strongpassword")
+        # register callback methods with the Event client
+        @e_client.register(
+          [
+            method(:on_current_program_scene_changed),
+            method(:on_input_mute_state_changed)
+          ]
+        )
     end
 
     # define "on_" event methods.
-    def on_current_program_scene_changed
+    def on_current_program_scene_changed(data)
         ...
     end
-    def on_input_mute_state_changed
+    def on_input_mute_state_changed(data)
         ...
     end
     ...

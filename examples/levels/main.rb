@@ -1,7 +1,6 @@
 require_relative "../../lib/obsws"
 require "yaml"
 
-
 module LevelTypes
   VU = 0
   POSTFADER = 1
@@ -14,7 +13,12 @@ class Main
   def initialize(**kwargs)
     subs = OBSWS::Events::SUBS::LOW_VOLUME | OBSWS::Events::SUBS::INPUTVOLUMEMETERS
     @e_client = OBSWS::Events::Client.new(subs:, **kwargs)
-    @e_client.add_observer(self)
+    @e_client.register(
+      [
+        method(:on_input_mute_state_changed),
+        method(:on_input_volume_meters)
+      ]
+    )
   end
 
   def run
