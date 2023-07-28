@@ -47,12 +47,12 @@ module OBSWS
           delay_sec: 0.001,
           timeout_sec: 3
         ) { @response[:requestId] == id }
-        if !@response[:requestStatus][:result]
+        unless @response[:requestStatus][:result]
           error = [
             "Request #{@response[:requestType]} returned code #{@response[:requestStatus][:code]}"
           ]
           if @response[:requestStatus].key?(:comment)
-            error += ["With message: #{@response[:requestStatus][:comment]}"]
+            error << ["With message: #{@response[:requestStatus][:comment]}"]
           end
           raise OBSWSError.new(error.join("\n"))
         end

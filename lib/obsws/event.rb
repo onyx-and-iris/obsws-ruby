@@ -42,7 +42,7 @@ module OBSWS
       end
 
       def add_observer(observer)
-        observer = [observer] if !observer.respond_to? :each
+        observer = [observer] unless observer.respond_to? :each
         observer.each { |o| observers << o unless observers.include? o }
       end
 
