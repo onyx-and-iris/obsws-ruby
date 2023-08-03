@@ -26,11 +26,11 @@ module OBSWS
       def attrs = @fields.map { |f| snakecase(f.to_s) }
     end
 
-    class Response < MetaObject
-    end
+    class Response < MetaObject; end
+    # Represents a request response object
 
-    class Data < MetaObject
-    end
+    class Data < MetaObject; end
+    # Represents an event data object
 
     module TearDown
       def stop_driver
