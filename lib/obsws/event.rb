@@ -47,10 +47,11 @@ module OBSWS
       end
 
       def remove_observer(observer)
-        observers.delete(observer)
+        observer = [observer] unless observer.respond_to? :each
+        observers.reject! { |o| observer.include? o }
       end
 
-      def notify_observers(event, data)
+      private def notify_observers(event, data)
         observers.each do |o|
           if o.is_a? Method
             if o.name.to_s == "on_#{snakecase(event)}"
@@ -62,6 +63,7 @@ module OBSWS
         end
       end
 
+      alias_method :callbacks, :observers
       alias_method :register, :add_observer
       alias_method :deregister, :remove_observer
     end
