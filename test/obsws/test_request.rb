@@ -1,6 +1,6 @@
 require_relative "../minitest_helper"
 
-class RequestTest < OBSWSTest
+class RequestTest < Minitest::Test
   def test_it_checks_obs_major_version
     resp = OBSWSTest.r_client.get_version
     ver = resp.obs_version.split(".").map(&:to_i)

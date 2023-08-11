@@ -2,8 +2,11 @@ require_relative "../minitest_helper"
 
 class OBSWSConnectionErrorTest < Minitest::Test
   def test_it_raises_an_obsws_connection_error_on_wrong_password
-    e = assert_raises(OBSWS::OBSWSConnectionError) { OBSWS::Requests::Client.new(host: "localhost", port: 4455, password: "wrongpassword", connect_timeout: 1).new }
-    assert_equal(e.message, "Timed out waiting for successful identification (1 seconds elapsed)")
+    e = assert_raises(OBSWS::OBSWSConnectionError) do
+      OBSWS::Requests::Client
+        .new(host: "localhost", port: 4455, password: "wrongpassword", connect_timeout: 0.1)
+    end
+    assert_equal(e.message, "Timed out waiting for successful identification (0.1 seconds elapsed)")
   end
 end
 
