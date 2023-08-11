@@ -43,11 +43,12 @@ module OBSWS
           timeout_sec: 3
         ) { @response[:requestId] == uuid }
         unless @response[:requestStatus][:result]
-          OBSWSRequestError.new(@response[:requestType], @response[:requestStatus][:code], @response[:requestStatus][:comment]) => e
-          logger.error(["#{e.class.name}: #{e.message}", *e.backtrace].join("\n"))
-          raise e
+          raise OBSWSRequestError.new(@response[:requestType], @response[:requestStatus][:code], @response[:requestStatus][:comment])
         end
         @response[:responseData]
+      rescue OBSWSRequestError => e
+        logger.error(["#{e.class.name}: #{e.message}", *e.backtrace].join("\n"))
+        raise
       rescue WaitUtil::TimeoutError => e
         logger.error(["#{e.class.name}: #{e.message}", *e.backtrace].join("\n"))
         raise OBSWSError.new([e.message, *e.backtrace].join("\n"))
