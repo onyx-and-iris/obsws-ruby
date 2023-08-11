@@ -1,5 +1,5 @@
 module OBSWS
-  module Version
+  module VERSION
     module_function
 
     def major
@@ -7,11 +7,11 @@ module OBSWS
     end
 
     def minor
-      4
+      5
     end
 
     def patch
-      2
+      0
     end
 
     def to_a
@@ -22,6 +22,4 @@ module OBSWS
       to_a.join(".")
     end
   end
-
-  VERSION = Version.to_s
 end

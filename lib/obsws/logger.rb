@@ -1,5 +1,3 @@
-require "logger"
-
 module OBSWS
   module Logging
     def logger

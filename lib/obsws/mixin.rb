@@ -1,5 +1,3 @@
-require_relative "util"
-
 module OBSWS
   module Mixin
     module Meta

@@ -1,22 +1,18 @@
-require "waitutil"
-
-require_relative "base"
-require_relative "error"
-require_relative "util"
-require_relative "mixin"
-require_relative "logger"
-
 module OBSWS
   module Requests
     class Client
       include Logging
-      include Error
       include Mixin::TearDown
       include Mixin::OPCodes
 
       def initialize(**kwargs)
         @base_client = Base.new(**kwargs)
         logger.info("#{self} successfully identified with server")
+      rescue Errno::ECONNREFUSED, WaitUtil::TimeoutError => e
+        msg = "#{e.class.name}: #{e.message}"
+        logger.error(msg)
+        raise OBSWSConnectionError.new(msg)
+      else
         @base_client.updater = ->(op_code, data) {
           logger.debug("response received: #{data}")
           @response = data if op_code == Mixin::OPCodes::REQUESTRESPONSE
@@ -48,19 +44,23 @@ module OBSWS
           timeout_sec: 3
         ) { @response[:requestId] == id }
         unless @response[:requestStatus][:result]
-          error = [
-            "Request #{@response[:requestType]} returned code #{@response[:requestStatus][:code]}"
-          ]
-          if @response[:requestStatus].key?(:comment)
-            error << ["With message: #{@response[:requestStatus][:comment]}"]
-          end
-          raise OBSWSError.new(error.join("\n"))
+          raise OBSWSRequestError.new(@response[:requestType], @response[:requestStatus][:code], @response[:requestStatus][:comment])
         end
         @response[:responseData]
-      rescue WaitUtil::TimeoutError
-        msg = "no response with matching id received"
-        logger.error(msg)
-        raise OBSWSError.new(msg)
+      rescue OBSWSRequestError => e
+        err_msg = [
+          "#{e.class.name}: #{e.message}",
+          *e.backtrace
+        ]
+        logger.error(err_msg.join("\n"))
+        raise
+      rescue WaitUtil::TimeoutError => e
+        err_msg = [
+          "#{e.class.name}: #{e.message}",
+          *e.backtrace
+        ]
+        logger.error(err_msg)
+        raise OBSWSError.new(err_msg)
       end
 
       def get_version

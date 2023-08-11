@@ -109,7 +109,13 @@ def on_scene_created(data):
 
 ### Errors
 
-If a request fails an `OBSWSError` will be raised with a status code.
+If a general error occurs an `OBSWSError` will be raised.
+
+If a connection attempt fails or times out an `OBSWSConnectionError` will be raised.
+
+If a request fails an `OBSWSRequestError` will be raised with a status code.
+
+- The request name and code are retrievable through attributes {OBSWSRequestError}.name and {OBSWSRequestError}.code
 
 For a full list of status codes refer to [Codes](https://github.com/obsproject/obs-websocket/blob/master/docs/generated/protocol.md#requeststatus)
 

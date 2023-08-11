@@ -1,12 +1,3 @@
-require "digest/sha2"
-require "json"
-require "waitutil"
-
-require_relative "driver"
-require_relative "error"
-require_relative "logger"
-require_relative "mixin"
-
 module OBSWS
   class Base
     include Logging

@@ -1,9 +1,3 @@
-require "json"
-
-require_relative "util"
-require_relative "mixin"
-require_relative "logger"
-
 module OBSWS
   module Events
     module SUBS
@@ -78,6 +72,11 @@ module OBSWS
         kwargs[:subs] ||= SUBS::LOW_VOLUME
         @base_client = Base.new(**kwargs)
         logger.info("#{self} successfully identified with server")
+      rescue Errno::ECONNREFUSED, WaitUtil::TimeoutError => e
+        msg = "#{e.class.name}: #{e.message}"
+        logger.error(msg)
+        raise OBSWSConnectionError.new(msg)
+      else
         @base_client.updater = ->(op_code, data) {
           if op_code == Mixin::OPCodes::EVENT
             logger.debug("received: #{data}")

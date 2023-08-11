@@ -1,6 +1,3 @@
-require "socket"
-require "websocket/driver"
-
 module OBSWS
   module Driver
     class Socket
