@@ -1,10 +1,27 @@
 module OBSWS
+  class Identified
+    attr_accessor :state
+
+    def initialize
+      @state = :pending
+    end
+
+    def error_message
+      case @state
+      when :passwordless
+        "auth enabled but no password provided"
+      else
+        "failed to identify client with the websocket server"
+      end
+    end
+  end
+
   class Base
     include Logging
     include Driver::Director
     include Mixin::OPCodes
 
-    attr_reader :closed
+    attr_reader :closed, :identified
     attr_writer :updater
 
     def initialize(**kwargs)
@@ -13,11 +30,12 @@ module OBSWS
       @password = kwargs[:password] || ""
       @subs = kwargs[:subs] || 0
       setup_driver(host, port) and start_driver
+      @identified = Identified.new
       WaitUtil.wait_for_condition(
         "successful identification",
         delay_sec: 0.01,
         timeout_sec: kwargs[:connect_timeout] || 3
-      ) { @identified }
+      ) { @identified.state != :pending }
     end
 
     private
@@ -38,7 +56,8 @@ module OBSWS
       }
       if auth
         if @password.empty?
-          raise OBSWSError("auth enabled but no password provided")
+          @identified.state = :passwordless
+          return
         end
         logger.info("initiating authentication")
         payload[:d][:authentication] = auth_token(**auth)
@@ -51,7 +70,7 @@ module OBSWS
       when Mixin::OPCodes::HELLO
         identify(data[:d][:authentication])
       when Mixin::OPCodes::IDENTIFIED
-        @identified = true
+        @identified.state = :identified
       when Mixin::OPCodes::EVENT, Mixin::OPCodes::REQUESTRESPONSE
         @updater.call(data[:op], data[:d])
       end
