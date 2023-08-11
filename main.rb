@@ -1,4 +1,4 @@
-require_relative "lib/obsws"
+require "obsws"
 
 class Main
   def run
