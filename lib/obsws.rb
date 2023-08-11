@@ -1,9 +1,10 @@
 require "digest/sha2"
 require "json"
-require "waitutil"
-require "socket"
-require "websocket/driver"
 require "logger"
+require "securerandom"
+require "socket"
+require "waitutil"
+require "websocket/driver"
 
 require_relative "obsws/logger"
 require_relative "obsws/driver"

@@ -35,20 +35,19 @@ module OBSWS
       end
 
       def call(req, data = nil)
-        id = rand(1..1000)
-        @base_client.req(id, req, data)
+        uuid = SecureRandom.uuid
+        @base_client.req(uuid, req, data)
         WaitUtil.wait_for_condition(
           "reponse id to match request id",
           delay_sec: 0.001,
           timeout_sec: 3
-        ) { @response[:requestId] == id }
+        ) { @response[:requestId] == uuid }
         unless @response[:requestStatus][:result]
-          raise OBSWSRequestError.new(@response[:requestType], @response[:requestStatus][:code], @response[:requestStatus][:comment])
+          OBSWSRequestError.new(@response[:requestType], @response[:requestStatus][:code], @response[:requestStatus][:comment]) => e
+          logger.error(["#{e.class.name}: #{e.message}", *e.backtrace].join("\n"))
+          raise e
         end
         @response[:responseData]
-      rescue OBSWSRequestError => e
-        logger.error(["#{e.class.name}: #{e.message}", *e.backtrace].join("\n"))
-        raise
       rescue WaitUtil::TimeoutError => e
         logger.error(["#{e.class.name}: #{e.message}", *e.backtrace].join("\n"))
         raise OBSWSError.new([e.message, *e.backtrace].join("\n"))
