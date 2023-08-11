@@ -11,7 +11,7 @@ module OBSWS
     end
 
     def patch
-      6
+      7
     end
 
     def to_a
