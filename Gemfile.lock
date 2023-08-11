@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    obsws (0.5.3)
+    obsws (0.5.4)
       waitutil (~> 0.2.1)
       websocket-driver (~> 0.7.5)
 
