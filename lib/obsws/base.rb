@@ -12,11 +12,12 @@ module OBSWS
       port = kwargs[:port] || 4455
       @password = kwargs[:password] || ""
       @subs = kwargs[:subs] || 0
+      @connect_timeout = kwargs[:connect_timeout] || 3
       setup_driver(host, port) and start_driver
       WaitUtil.wait_for_condition(
         "successful identification",
         delay_sec: 0.01,
-        timeout_sec: 3
+        timeout_sec: @connect_timeout
       ) { @identified }
     end
 
