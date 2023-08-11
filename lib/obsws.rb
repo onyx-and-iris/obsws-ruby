@@ -33,7 +33,7 @@ module OBSWS
 
     def message
       msg = [
-        "Request #{@name} returned code #{@code}."
+        "Request #{@req_name} returned code #{@code}."
       ]
       msg << "With message: #{@msg}" if @msg
       msg.join(" ")
