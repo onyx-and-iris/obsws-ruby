@@ -71,6 +71,11 @@ module OBSWS
       def initialize(**kwargs)
         kwargs[:subs] ||= SUBS::LOW_VOLUME
         @base_client = Base.new(**kwargs)
+        unless @base_client.identified.state == :identified
+          err_msg = @base_client.identified.error_message
+          logger.error(err_msg)
+          raise OBSWSConnectionError.new(err_msg)
+        end
         logger.info("#{self} successfully identified with server")
       rescue Errno::ECONNREFUSED, WaitUtil::TimeoutError => e
         msg = "#{e.class.name}: #{e.message}"

@@ -9,9 +9,17 @@ class OBSWSConnectionErrorTest < Minitest::Test
     assert_equal("Timed out waiting for successful identification (0.1 seconds elapsed)", e.message)
   end
 
-  def test_it_raises_an_obsws_connection_error_on_auth_enabled_but_no_password_provided
+  def test_it_raises_an_obsws_connection_error_on_auth_enabled_but_no_password_provided_for_request_client
     e = assert_raises(OBSWS::OBSWSConnectionError) do
       OBSWS::Requests::Client
+        .new(host: "localhost", port: 4455, password: "")
+    end
+    assert_equal("auth enabled but no password provided", e.message)
+  end
+
+  def test_it_raises_an_obsws_connection_error_on_auth_enabled_but_no_password_provided_for_event_client
+    e = assert_raises(OBSWS::OBSWSConnectionError) do
+      OBSWS::Events::Client
         .new(host: "localhost", port: 4455, password: "")
     end
     assert_equal("auth enabled but no password provided", e.message)
