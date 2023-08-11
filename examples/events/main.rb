@@ -3,8 +3,6 @@ require "yaml"
 
 
 class Main
-  attr_reader :running
-
   def initialize(**kwargs)
     @r_client = OBSWS::Requests::Client.new(**kwargs)
     @e_client = OBSWS::Events::Client.new(**kwargs)
@@ -15,7 +13,7 @@ class Main
   end
 
   def run
-    sleep(0.1) while running
+    sleep(0.1) while @running
   end
 
   def infostring
