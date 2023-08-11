@@ -9,9 +9,8 @@ module OBSWS
         @base_client = Base.new(**kwargs)
         logger.info("#{self} successfully identified with server")
       rescue Errno::ECONNREFUSED, WaitUtil::TimeoutError => e
-        msg = "#{e.class.name}: #{e.message}"
-        logger.error(msg)
-        raise OBSWSConnectionError.new(msg)
+        logger.error("#{e.class.name}: #{e.message}")
+        raise OBSWSConnectionError.new(e.message)
       else
         @base_client.updater = ->(op_code, data) {
           logger.debug("response received: #{data}")
@@ -48,19 +47,11 @@ module OBSWS
         end
         @response[:responseData]
       rescue OBSWSRequestError => e
-        err_msg = [
-          "#{e.class.name}: #{e.message}",
-          *e.backtrace
-        ]
-        logger.error(err_msg.join("\n"))
+        logger.error(["#{e.class.name}: #{e.message}", *e.backtrace].join("\n"))
         raise
       rescue WaitUtil::TimeoutError => e
-        err_msg = [
-          "#{e.class.name}: #{e.message}",
-          *e.backtrace
-        ]
-        logger.error(err_msg)
-        raise OBSWSError.new(err_msg)
+        logger.error(["#{e.class.name}: #{e.message}", *e.backtrace].join("\n"))
+        raise OBSWSError.new([e.message, *e.backtrace].join("\n"))
       end
 
       def get_version
