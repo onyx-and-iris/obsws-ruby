@@ -6,15 +6,23 @@ class OBSWSConnectionErrorTest < Minitest::Test
       OBSWS::Requests::Client
         .new(host: "localhost", port: 4455, password: "wrongpassword", connect_timeout: 0.1)
     end
-    assert_equal(e.message, "Timed out waiting for successful identification (0.1 seconds elapsed)")
+    assert_equal("Timed out waiting for successful identification (0.1 seconds elapsed)", e.message)
+  end
+
+  def test_it_raises_an_obsws_connection_error_on_auth_enabled_but_no_password_provided
+    e = assert_raises(OBSWS::OBSWSConnectionError) do
+      OBSWS::Requests::Client
+        .new(host: "localhost", port: 4455, password: "")
+    end
+    assert_equal("auth enabled but no password provided", e.message)
   end
 end
 
 class OBSWSRequestErrorTest < Minitest::Test
   def test_it_raises_an_obsws_request_error_on_invalid_request
     e = assert_raises(OBSWS::OBSWSRequestError) { OBSWSTest.r_client.toggle_input_mute("unknown") }
-    assert_equal(e.req_name, "ToggleInputMute")
-    assert_equal(e.code, 600)
-    assert_equal(e.message, "Request ToggleInputMute returned code 600. With message: No source was found by the name of `unknown`.")
+    assert_equal("ToggleInputMute", e.req_name)
+    assert_equal(600, e.code)
+    assert_equal("Request ToggleInputMute returned code 600. With message: No source was found by the name of `unknown`.", e.message)
   end
 end
