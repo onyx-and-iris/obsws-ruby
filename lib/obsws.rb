@@ -25,7 +25,7 @@ module OBSWS
     attr_reader :req_name, :code
 
     def initialize(req_name, code, msg)
-      @req_name = name
+      @req_name = req_name
       @code = code
       @msg = msg
       super(message)
