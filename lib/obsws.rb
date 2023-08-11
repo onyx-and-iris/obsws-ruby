@@ -22,10 +22,10 @@ module OBSWS
   class OBSWSConnectionError < OBSWSError; end
 
   class OBSWSRequestError < OBSWSError
-    attr_reader :name, :code
+    attr_reader :req_name, :code
 
-    def initialize(name, code, msg)
-      @name = name
+    def initialize(req_name, code, msg)
+      @req_name = name
       @code = code
       @msg = msg
       super(message)
