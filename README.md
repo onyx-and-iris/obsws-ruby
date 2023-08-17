@@ -100,8 +100,9 @@ example:
 resp = cl.get_version
 p resp.attrs
 
-def on_scene_created(data):
-    p data.attrs
+@e_client.on :input_mute_state_changed do |data|
+  p data.attrs
+end
 ```
 
 ### Errors
