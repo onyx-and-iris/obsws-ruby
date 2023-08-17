@@ -25,19 +25,12 @@ module OBSWS
   class OBSWSRequestError < OBSWSError
     attr_reader :req_name, :code
 
-    def initialize(req_name, code, msg)
+    def initialize(req_name, code, comment)
       @req_name = req_name
       @code = code
-      @msg = msg
+      message = "Request #{req_name} returned code #{code}."
+      message << " With message: #{comment}" if comment
       super(message)
-    end
-
-    def message
-      msg = [
-        "Request #{@req_name} returned code #{@code}."
-      ]
-      msg << "With message: #{@msg}" if @msg
-      msg.join(" ")
     end
   end
 end
