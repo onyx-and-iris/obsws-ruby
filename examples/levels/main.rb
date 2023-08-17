@@ -14,12 +14,12 @@ class Main
     subs = OBSWS::Events::SUBS::LOW_VOLUME | OBSWS::Events::SUBS::INPUTVOLUMEMETERS
     @e_client = OBSWS::Events::Client.new(subs:, **kwargs)
 
-    @e_client.on(:input_mute_state_changed) do |data|
+    @e_client.on :input_mute_state_changed do |data|
       if data.input_name == DEVICE
         puts "#{DEVICE} mute toggled"
       end
     end
-    @e_client.on(:input_volume_meters) do |data|
+    @e_client.on :input_volume_meters do |data|
       fget = ->(x) { (x > 0) ? (20 * Math.log(x, 10)).round(1) : -200.0 }
 
       data.inputs.each do |d|

@@ -6,16 +6,16 @@ class Main
     @r_client = OBSWS::Requests::Client.new(**kwargs)
     @e_client = OBSWS::Events::Client.new(**kwargs)
 
-    @e_client.on(:current_program_scene_changed) do |data|
+    @e_client.on :current_program_scene_changed do |data|
       puts "Switched to scene #{data.scene_name}"
     end
-    @e_client.on(:scene_created) do |data|
+    @e_client.on :scene_created do |data|
       puts "scene #{data.scene_name} has been created"
     end
-    @e_client.on(:input_mute_state_changed) do |data|
+    @e_client.on :input_mute_state_changed do |data|
       puts "#{data.input_name} mute toggled"
     end
-    @e_client.on(:exit_started) do
+    @e_client.on :exit_started do
       puts "OBS closing!"
       @r_client.close
       @e_client.close
