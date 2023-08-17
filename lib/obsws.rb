@@ -28,7 +28,7 @@ module OBSWS
     def initialize(req_name, code, comment)
       @req_name = req_name
       @code = code
-      message = "Request #{req_name} returned code #{code}."
+      message = "Request #{@req_name} returned code #{@code}."
       message << " With message: #{comment}" if comment
       super(message)
     end
