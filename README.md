@@ -97,7 +97,7 @@ For both request responses and event data you may inspect the available attribut
 example:
 
 ```ruby
-resp = cl.get_version
+resp = @r_client.get_version
 p resp.attrs
 
 @e_client.on :input_mute_state_changed do |data|
