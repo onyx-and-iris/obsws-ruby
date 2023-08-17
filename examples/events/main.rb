@@ -1,19 +1,28 @@
 require_relative "../../lib/obsws"
 require "yaml"
 
-
 class Main
   def initialize(**kwargs)
     @r_client = OBSWS::Requests::Client.new(**kwargs)
     @e_client = OBSWS::Events::Client.new(**kwargs)
-    @e_client.add_observer(self)
+
+    @e_client.on(:current_program_scene_changed) do |data|
+      puts "Switched to scene #{data.scene_name}"
+    end
+    @e_client.on(:scene_created) do |data|
+      puts "scene #{data.scene_name} has been created"
+    end
+    @e_client.on(:input_mute_state_changed) do |data|
+      puts "#{data.input_name} mute toggled"
+    end
+    @e_client.on(:exit_started) do
+      puts "OBS closing!"
+      @r_client.close
+      @e_client.close
+      @running = false
+    end
 
     puts infostring
-    @running = true
-  end
-
-  def run
-    sleep(0.1) while @running
   end
 
   def infostring
@@ -24,23 +33,9 @@ class Main
     ].join(" ")
   end
 
-  def on_current_program_scene_changed(data)
-    puts "Switched to scene #{data.scene_name}"
-  end
-
-  def on_scene_created(data)
-    puts "scene #{data.scene_name} has been created"
-  end
-
-  def on_input_mute_state_changed(data)
-    puts "#{data.input_name} mute toggled"
-  end
-
-  def on_exit_started
-    puts "OBS closing!"
-    @r_client.close
-    @e_client.close
-    @running = false
+  def run
+    @running = true
+    sleep(0.1) while @running
   end
 end
 

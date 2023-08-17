@@ -28,43 +28,35 @@ module OBSWS
       ALL = LOW_VOLUME | HIGH_VOLUME
     end
 
-    module Callbacks
+    module EventDirector
       include Util::String
 
       def observers
-        @observers ||= []
+        @observers ||= {}
       end
 
-      def add_observer(observer)
-        observer = [observer] unless observer.respond_to? :each
-        observer.each { |o| observers << o unless observers.include? o }
+      def on(event, method = nil, &block)
+        (observers[event] ||= []) << (block || method)
       end
 
-      def remove_observer(observer)
-        observer = [observer] unless observer.respond_to? :each
-        observers.reject! { |o| observer.include? o }
+      def register(cbs)
+        cbs = [cbs] unless cbs.respond_to? :each
+        cbs.each { |cb| on(cb.name[3..].to_sym, cb) }
       end
 
-      private def notify_observers(event, data)
-        observers.each do |o|
-          if o.is_a? Method
-            if o.name.to_s == "on_#{snakecase(event)}"
-              data.empty? ? o.call : o.call(data)
-            end
-          elsif o.respond_to? "on_#{snakecase(event)}"
-            data.empty? ? o.send("on_#{snakecase(event)}") : o.send("on_#{snakecase(event)}", data)
-          end
-        end
+      def deregister(cbs)
+        cbs = [cbs] unless cbs.respond_to? :each
+        cbs.each { |cb| observers[cb.name[3..].to_sym]&.reject! { |o| cbs.include? o } }
       end
 
-      alias_method :callbacks, :observers
-      alias_method :register, :add_observer
-      alias_method :deregister, :remove_observer
+      def fire(event, data)
+        observers[snakecase(event).to_sym]&.each { |block| data.empty? ? block.call : block.call(data) }
+      end
     end
 
     class Client
       include Logging
-      include Callbacks
+      include EventDirector
       include Mixin::TearDown
       include Mixin::OPCodes
 
@@ -87,7 +79,7 @@ module OBSWS
             logger.debug("received: #{data}")
             event = data[:eventType]
             data = data.fetch(:eventData, {})
-            notify_observers(event, Mixin::Data.new(data, data.keys))
+            fire(event, Mixin::Data.new(data, data.keys))
           end
         }
       end

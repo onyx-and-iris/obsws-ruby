@@ -67,7 +67,7 @@ For a full list of requests refer to [Requests](https://github.com/obsproject/ob
 
 ### Events
 
-Register `on_` callback methods. Method names should match the api event but snake cased.
+Register blocks with the Event client using the `on` method. The event data will be passed to the block.
 
 example:
 
@@ -75,23 +75,14 @@ example:
 class Observer
     def initialize
         @e_client = OBSWS::Events::Client.new(host: "localhost", port: 4455, password: "strongpassword")
-        # register callback methods with the Event client
-        @e_client.register(
-          [
-            method(:on_current_program_scene_changed),
-            method(:on_input_mute_state_changed)
-          ]
-        )
+        # register blocks on event types.
+        @e_client.on(:current_program_scene_changed) do |data|
+          ...
+        end
+        @e_client.on(:input_mute_state_changed) do |data|
+          ...
+        end
     end
-
-    # define "on_" event methods.
-    def on_current_program_scene_changed(data)
-        ...
-    end
-    def on_input_mute_state_changed(data)
-        ...
-    end
-    ...
 end
 ```
 
