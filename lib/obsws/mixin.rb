@@ -1,16 +1,17 @@
 module OBSWS
   module Mixin
     module Meta
-      include Util::String
+      using Util::CoreExtensions
 
       def make_field_methods(*params)
         params.each do |param|
-          define_singleton_method(snakecase(param.to_s)) { @resp[param] }
+          define_singleton_method(param.to_s.snakecase) { @resp[param] }
         end
       end
     end
 
     class MetaObject
+      using Util::CoreExtensions
       include Mixin::Meta
 
       def initialize(resp, fields)
@@ -21,7 +22,7 @@ module OBSWS
 
       def empty? = @fields.empty?
 
-      def attrs = @fields.map { |f| snakecase(f.to_s) }
+      def attrs = @fields.map { |f| f.to_s.snakecase }
     end
 
     # Represents a request response object

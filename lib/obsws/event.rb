@@ -28,8 +28,8 @@ module OBSWS
       ALL = LOW_VOLUME | HIGH_VOLUME
     end
 
-    module EventDirector
-      include Util::String
+    module Director
+      using Util::CoreExtensions
 
       def observers
         @observers ||= {}
@@ -50,13 +50,13 @@ module OBSWS
       end
 
       def fire(event, data)
-        observers[snakecase(event).to_sym]&.each { |block| data.empty? ? block.call : block.call(data) }
+        observers[event.snakecase.to_sym]&.each { |block| data.empty? ? block.call : block.call(data) }
       end
     end
 
     class Client
       include Logging
-      include EventDirector
+      include Events::Director
       include Mixin::TearDown
       include Mixin::OPCodes
 
