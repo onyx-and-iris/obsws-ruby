@@ -17,7 +17,7 @@ Gem::Specification.new do |spec|
   spec.add_runtime_dependency "waitutil", "~> 0.2.1"
   spec.add_development_dependency "standard", "~> 1.30"
   spec.add_development_dependency "minitest", "~> 5.16", ">= 5.16.3"
-  spec.add_development_dependency "rake", "~> 11.2", ">= 11.2.2"
+  spec.add_development_dependency "rake", ">= 11.2.2", "~> 13.0"
   spec.required_ruby_version = ">= 3.0"
   spec.metadata = {
     "source_code_uri" => "https://github.com/onyx-and-iris/obsws-ruby"
